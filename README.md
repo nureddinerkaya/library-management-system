@@ -1,4 +1,4 @@
-CENG 434 Web Tasarım ve Geliştirme dersi için Kütüphâne İdâre Nizamesi projesi.
+CENG 434 Web Tasarım ve Geliştirme dersi için Kütüphâne İdâre Nizâmesi projesi.
 
 Eğer projeyi klonlayınca venv otomatikman oluşturulup requirements.txt'nin içindekiler kurulmuyorsa bunlar şöyle yapılmalı:
 
