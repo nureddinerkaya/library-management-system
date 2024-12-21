@@ -3,7 +3,7 @@ from sanic.response import json
 from backend.database import Base, engine
 
 #Oluşturduğumuz entity classların database'de de oluşturulması için onları buraya import etmemiz icab ediyor.
-from book.BookEntity import Book
+from book.BookEntity import BookEntity
 
 app = Sanic("LibraryManagementApp")
 

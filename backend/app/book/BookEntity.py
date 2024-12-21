@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String
 from backend.database import Base
 
 
-class Book(Base):
+class BookEntity(Base):
     __tablename__ = "Book"
 
     ID = Column(Integer, primary_key=True, index=True, autoincrement=True)
