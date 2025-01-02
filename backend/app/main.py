@@ -1,17 +1,19 @@
 from sanic import Sanic
 from sanic.response import json
 from backend.database import Base, engine
-
-#Oluşturduğumuz entity classların database'de de oluşturulması için onları buraya import etmemiz icab ediyor.
-
+from book.BookEntity import BookEntity
+import book.BookBlueprint
 from copies.Copies import *
 
 app = Sanic("LibraryManagementApp")
 
-# Create database tables (including those from copies.Copies)
+app.blueprint(book.BookBlueprint.bp)
+
+# Create database tables
 @app.listener("before_server_start")
 async def setup_db(app, loop):
     Base.metadata.create_all(bind=engine)
+    print("Database tables created successfully.")
 
 @app.route("/")
 async def index(request):
