@@ -38,9 +38,9 @@ async def get_book_by_title(request):
     return await BookService.get_books_by_title(request)
 
 
-@bp.route("/getByAuthor", methods=["GET"])
+@bp.route("/getByAuthors", methods=["GET"])
 async def get_book_by_author(request):
-    # Example: GET /getByAuthor?author=F+Scott+Fitzgerald
+    # Example: GET /getByAuthors?authors=F+Scott+Fitzgerald
     return await BookService.get_books_by_author(request)
 
 
@@ -59,7 +59,7 @@ async def add_book(request):
     #     "authors": "Jane Austen",
     #     "isbn": "0-061-96436-0",
     #     "publisher": "Publisher Name",
-    #     "category": "Literature"
+    #     "category": "Literature",
     #     "date":"1992-12-28",
     #     "pages":192
     # }
