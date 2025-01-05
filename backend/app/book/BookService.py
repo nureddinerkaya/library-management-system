@@ -101,6 +101,7 @@ class BookService:
             try:
                 data = request.json #bu fonksiyon json payload'ını alıp python dict'ine dönüştürüyormuş
                 new_book = BookEntity.from_dict(data)
+                print(type(new_book.date))
                 session.add(new_book)
                 session.commit()
                 return text("status: success, message" "BookEntity added successfully")
@@ -111,41 +112,40 @@ class BookService:
                 session.close()
 
     @staticmethod
-    def update_book(request):
+    async def update_book(request):
         session = SessionLocal()
         try:
             data = request.json
             book_id = data["id"]
             book = session.query(BookEntity).filter_by(id=book_id).first()
             if not book:
-                return {"status": "error", "message": "BookEntity not found"}
+                return text("BookEntity not found")
 
             for key, value in data.items():
                 if hasattr(book, key):
                     setattr(book, key, value)
             session.commit()
-            return {"status": "success", "message": "BookEntity updated successfully"}
+            return text("{)status: success, message: BookEntity updated successfully")
         except Exception as e:
             session.rollback()
-            return {"status": "error", "message": str(e)}
+            return text(str(e))
         finally:
             session.close()
 
     @staticmethod
-    def delete_book(request):
+    async def delete_book(request):
         session = SessionLocal()
         try:
             book_id = int(request.args.get("id"))
             book = session.query(BookEntity).filter_by(id=book_id).first()
             if not book:
-                return {"status": "error", "message": "BookEntity not found"}
-
+                return json({"status": "error", "message": "BookEntity not found"})
             session.delete(book)
             session.commit()
-            return {"status": "success", "message": "BookEntity deleted successfully"}
+            return json({"status": "success", "message": "BookEntity deleted successfully"})
         except Exception as e:
             session.rollback()
-            return {"status": "error", "message": str(e)}
+            return json({"status": "error", "message": str(e)})
         finally:
             session.close()
 

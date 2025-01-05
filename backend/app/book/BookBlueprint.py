@@ -71,7 +71,7 @@ async def update_book(request):
     # Example: PUT /update
     # Request Body (JSON):
     # {
-    #     "id": "123",
+    #     "id": 123,
     #     "title": "Updated Book Title",
     #     "author": "Updated Author Name"
     # }
