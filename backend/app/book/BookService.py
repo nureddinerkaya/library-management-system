@@ -1,81 +1,147 @@
-from sqlalchemy.orm import Session
+from sanic import json, text
 
 from backend.app.book.BookEntity import BookEntity
 from backend.database import SessionLocal
 
 
-def create_book(name: str, authors: str, category: str, date: str, ISBN: str, pages: int):
-    session: Session = SessionLocal()
-    try:
-        new_book = BookEntity(
-            name=name,
-            authors=authors,
-            category=category,
-            date=date,
-            ISBN=ISBN,
-            pages=pages,
-        )
-        session.add(new_book)
-        session.commit()
-        session.refresh(new_book)
-        return new_book
-    finally:
-        session.close()
+class BookService:
+
+    @staticmethod
+    async def get_all_books(request):
+        with SessionLocal() as session:
+            results = session.query(BookEntity).all()
+            books = [book.to_dict() for book in results]
+            return json(books)
+
+    @staticmethod
+    async def get_book_by_id(request):
+        with SessionLocal() as session:
+            try:
+                book_id = int(request.args.get("id"))
+                book = session.query(BookEntity).filter_by(id=book_id).first()
+                if book:
+                    result = book.to_dict()
+                    return json({"status": "success", "data": result})
+                return json({"status": "error", "message": "BookEntity not found"})
+            except Exception as e:
+                return json({"status": "error", "message": str(e)})
+
+    #@staticmethod
+    #async def get_book_by_title(request):
+    #    with SessionLocal() as session:
+    #        try:
+    #            title = request.args.get("title")
+    #            book = session.query(BookEntity).filter_by(title=title).first()
+    #            if book:
+    #                result = book.to_dict()
+    #                return json({"status": "success", "data": result})
+    #            return json({"status": "error", "message": "BookEntity not found"})
+    #        except Exception as e:
+    #            return json({"status": "error", "message": str(e)})
+#
+    #@staticmethod
+    #async def get_book_by_authors(request):
+    #    with SessionLocal() as session:
+    #        try:
+    #            authors = request.args.get("authors")
+    #            book = session.query(BookEntity).filter_by(authors=authors).first()
+    #            if book:
+    #                result = book.to_dict()
+    #                return json({"status": "success", "data": result})
+    #            return json({"status": "error", "message": "BookEntity not found"})
+    #        except Exception as e:
+    #            return json({"status": "error", "message": str(e)})
+#
+    #@staticmethod
+    #async def get_book_by_publisher(request):
+    #    with SessionLocal() as session:
+    #        try:
+    #            publisher = request.args.get("publisher")
+    #            book = session.query(BookEntity).filter_by(publisher=publisher).first()
+    #            if book:
+    #                result = book.to_dict()
+    #                return json({"status": "success", "data": result})
+    #            return json({"status": "error", "message": "BookEntity not found"})
+    #        except Exception as e:
+    #            return json({"status": "error", "message": str(e)})
+#
+    #@staticmethod
+    #async def get_book_by_category(request):
+    #    with SessionLocal() as session:
+    #        try:
+    #            category = request.args.get("category")
+    #            book = session.query(BookEntity).filter_by(category=category).first()
+    #            if book:
+    #                result = book.to_dict()
+    #                return json({"status": "success", "data": result})
+    #            return json({"status": "error", "message": "BookEntity not found"})
+    #        except Exception as e:
+    #            return json({"status": "error", "message": str(e)})
+#
+    #@staticmethod
+    #async def get_book_by_isbn(request):
+    #    with SessionLocal() as session:
+    #        try:
+    #            isbn = request.args.get("isbn")
+    #            book = session.query(BookEntity).filter_by(isbn=isbn).first()
+    #            if book:
+    #                result = book.to_dict()
+    #                return json({"status": "success", "data": result})
+    #            return json({"status": "error", "message": "BookEntity not found"})
+    #        except Exception as e:
+    #            return json({"status": "error", "message": str(e)})
+
+    @staticmethod
+    async def add_book(request):
+        with SessionLocal() as session:
+            try:
+                data = request.json #bu fonksiyon json payload'ını alıp python dict'ine dönüştürüyormuş
+                new_book = BookEntity.from_dict(data)
+                session.add(new_book)
+                session.commit()
+                return text("status: success, message" "BookEntity added successfully")
+            except Exception as e:
+                session.rollback()
+                return text("Bir hata oldu, yaptığın kayıt edilmedi", str(e))
+            finally:
+                session.close()
+
+    @staticmethod
+    async def update_book(request):
+        session = SessionLocal()
+        try:
+            data = request.json
+            book_id = data["id"]
+            book = session.query(BookEntity).filter_by(id=book_id).first()
+            if not book:
+                return text("BookEntity not found")
+
+            for key, value in data.items():
+                if hasattr(book, key):
+                    setattr(book, key, value)
+            session.commit()
+            return text("{)status: success, message: BookEntity updated successfully")
+        except Exception as e:
+            session.rollback()
+            return text(str(e))
+        finally:
+            session.close()
+
+    @staticmethod
+    async def delete_book(request):
+        session = SessionLocal()
+        try:
+            book_id = int(request.args.get("id"))
+            book = session.query(BookEntity).filter_by(id=book_id).first()
+            if not book:
+                return json({"status": "error", "message": "BookEntity not found"})
+            session.delete(book)
+            session.commit()
+            return json({"status": "success", "message": "BookEntity deleted successfully"})
+        except Exception as e:
+            session.rollback()
+            return json({"status": "error", "message": str(e)})
+        finally:
+            session.close()
 
 
-# Retrieve all books or a specific book by ID
-def get_books():
-    session: Session = SessionLocal()
-    try:
-        return session.query(BookEntity).all()
-    finally:
-        session.close()
-
-
-def get_book_by_id(book_id: int):
-    session: Session = SessionLocal()
-    try:
-        return session.query(BookEntity).filter(BookEntity.ID == book_id).first()
-    finally:
-        session.close()
-
-
-# Update an existing book
-def update_book(book_id: int, name: str = None, authors: str = None, category: str = None, date: str = None,
-                ISBN: str = None, pages: int = None):
-    session: Session = SessionLocal()
-    try:
-        book = session.query(BookEntity).filter(BookEntity.ID == book_id).first()
-        if not book:
-            return None
-        if name:
-            book.name = name
-        if authors:
-            book.authors = authors
-        if category:
-            book.category = category
-        if date:
-            book.date = date
-        if ISBN:
-            book.ISBN = ISBN
-        if pages is not None:
-            book.pages = pages
-        session.commit()
-        session.refresh(book)
-        return book
-    finally:
-        session.close()
-
-
-# Delete a book by ID
-def delete_book(book_id: int):
-    session: Session = SessionLocal()
-    try:
-        book = session.query(BookEntity).filter(BookEntity.ID == book_id).first()
-        if not book:
-            return None
-        session.delete(book)
-        session.commit()
-        return book
-    finally:
-        session.close()
