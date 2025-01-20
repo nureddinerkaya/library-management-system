@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            background-color: gray;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 200px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #575757;
+            padding-left: 10px;
+        }
+
+        .main {
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        form {
+            margin-bottom: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: gray;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: gray;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f4f4f9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Library Management System - Admin Panel</h1>
+    </header>
+
+    <div class="sidebar">
+        <ul>
+            <li><a href="#" onclick="showTab('books')">Manage Books</a></li>
+            <li><a href="#" onclick="showTab('copies')">Manage Copies</a></li>
+            <li><a href="#" onclick="showTab('members')">Manage Members</a></li>
+            <li><a href="#" onclick="showTab('borrowings')">Manage Borrowings</a></li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div id="books" class="tab-content">
+            <h2>Manage Books</h2>
+            <form id="addBookForm">
+                <label for="Upload İmage"> Upload İmage</label>
+                <input type="image" id="Upload İmage" placeholder="upload upload image">
+                <label for="bookTitle">Book Title</label>
+                <input type="text" id="bookTitle" placeholder="Enter book title">
+                <label for="bookAuthor">Author</label>
+                <input type="text" id="bookAuthor" placeholder="Enter author name">
+                <label for="bookStock">Stock</label>
+                <input type="number" id="bookStock" placeholder="Enter stock amount">
+                <button type="button" onclick="addBook()">Add Book</button>
+            </form>
+            <table id="booksTable">
+                <thead>
+                    <tr>
+                        <th>İmage</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Book rows go here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="copies" class="tab-content">
+                    <h2>Manage Copies</h2>
+                    <form id="copyForm">
+                        <label for="copyTitle">Copy Title:</label>
+                        <input type="text" id="copyTitle" placeholder="Enter copy title" required>
+                        <br><br>
+                        <label for="copyPDF">Upload PDF:</label>
+                        <input type="file" id="copyPDF" accept=".pdf" required>
+                        <br><br>
+                        <button type="submit">Add Copy</button>
+                    </form>
+                    <div id="copyList">
+                        <h3>Copies List</h3>
+                        <ul id="copyListItems"></ul>
+                    </div>
+                
+            </form>
+            
+        </div>
+
+        <div id="members" class="tab-content">
+            <h2>Manage Members</h2>
+            <p>Manage Members Section Coming Soon!</p>
+        </div>
+
+        <div id="borrowings" class="tab-content">
+            <h2>Manage Borrowings</h2>
+            <p>Manage Borrowings Section Coming Soon!</p>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        }
+
+        function addBook() {
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('bookAuthor').value;
+            const stock = document.getElementById('bookStock').value;
+
+            if (title && author && stock) {
+                const tableBody = document.querySelector('#booksTable tbody');
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${title}</td>
+                    <td>${author}</td>
+                    <td>${stock}</td>
+                    <td><button onclick="deleteBook(this)">Delete</button></td>
+                `;
+
+                tableBody.appendChild(newRow);
+                document.getElementById('addBookForm').reset();
+            } else {
+                alert('Please fill all fields.');
+            }
+        }
+
+        function deleteBook(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+        }
+
+        // Initialize first tab
+        showTab('books');
+    </script>
+</body>
+</html>
