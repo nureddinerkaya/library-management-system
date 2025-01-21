@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: gray;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .main-container {
+            display: flex;
+        }
+        .sidebar {
+            width: 20%;
+            background-color: #fff;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+        .sidebar ul li a:hover {
+            color: gray;
+        }
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .book {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .book img {
+            max-width: 100px;
+            margin-bottom: 10px;
+        }
+        .book h4 {
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+        .book p {
+            margin: 5px 0;
+        }
+        .book button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: gray;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .book button:hover {
+            background-color: gray;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Library Management System</h1>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h3>Categories</h3>
+            <ul>
+                <li><a href="#">Fiction</a></li>
+                <li><a href="#">Non-fiction</a></li>
+                <li><a href="#">Science</a></li>
+                <li><a href="#">History</a></li>
+                <li><a href="#">Biography</a></li>
+                <li><a href="#">Fantasy</a></li>
+                <li><a href="#">Mystery</a></li>
+            </ul>
+        </div>
+
+        <div class="container">
+            <h2>Available Books</h2>
+            <div class="books-grid" id="booksGrid">
+                <!-- Books will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fetchBooks() {
+            // Simulated JSON data
+            const books = [
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 1",
+                    "author": "Author 1",
+                    "stock": 10
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 2",
+                    "author": "Author 2",
+                    "stock": 0
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 3",
+                    "author": "Author 3",
+                    "stock": 5
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 4",
+                    "author": "Author 4",
+                    "stock": 2
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 5",
+                    "author": "Author 5",
+                    "stock": 8
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 6",
+                    "author": "Author 6",
+                    "stock": 8
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 7",
+                    "author": "Author 7",
+                    "stock": 8
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 8",
+                    "author": "Author 8",
+                    "stock": 8
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 9",
+                    "author": "Author 9",
+                    "stock": 8
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 10",
+                    "author": "Author 10",
+                    "stock": 8
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 11",
+                    "author": "Author 11",
+                    "stock": 8
+                },
+                {
+                    "image": "https://via.placeholder.com/100",
+                    "title": "Book 12",
+                    "author": "Author 12",
+                    "stock": 8
+                },
+            ];
+
+            const booksGrid = document.getElementById("booksGrid");
+            booksGrid.innerHTML = ""; // Clear existing books
+
+            books.forEach(book => {
+                const bookElement = document.createElement("div");
+                bookElement.className = "book";
+                bookElement.innerHTML = `
+                    <img src="${book.image}" alt="${book.title} Cover">
+                    <h4>${book.title}</h4>
+                    <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>Stock:</strong> ${book.stock > 0 ? "In Stock" : "Out of Stock"}</p>
+                    <button>Borrow</button>
+                `;
+                booksGrid.appendChild(bookElement);
+            });
+        }
+
+        // Load books on page load
+        window.onload = fetchBooks;
+    </script>
+</body>
+</html>

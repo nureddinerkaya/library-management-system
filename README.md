@@ -1,6 +1,6 @@
 ## CENG 434 Web Tasarım ve Geliştirme dersi için Kütüphâne İdâre Nizâmesi projesi.
 
-Eğer projeyi klonlayınca venv otomatikman oluşturulup requirements.txt'nin içindekiler kurulmuyorsa bunlar şöyle yapılmalı:
+Backend kendi kendine kurulmadıysa şöyle kurulacak:
 
 ```
 python -m venv venv
@@ -12,4 +12,10 @@ venv\Scripts\activate
 source venv/bin/activate
 
 pip install -r requirements.txt
+```
+Frontend şöyle kurulacak:
+
+```
+cd frontend
+npm install
 ```
