@@ -1,34 +1,56 @@
-from sanic import Blueprint, response
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sanic import Sanic, Blueprint,response
 
-# Database setup
-
+from backend.app.copies.CopiesServices import CopiesServices
 
 # CopiesServices blueprint
 copies_blueprint = Blueprint("copies", url_prefix="/copies")
 
-@copies_blueprint.post("/")
+@copies_blueprint.route("/createcopy",methods=["POST"])
 async def create_copy(request):
-    """Handles creating a new copy."""
-    return response.json({"message": "Create copy endpoint"})
+    return  await CopiesServices.add_copy(request)
 
-@copies_blueprint.get("/<copy_id:int>")
-async def get_copy(request, copy_id):
+@copies_blueprint.route("/Getbycopyid",methods=["GET"])
+async def get_copy(request):
     """Handles retrieving a specific copy."""
-    return response.json({"message": f"Get copy with ID {copy_id}"})
+    return await CopiesServices.view_copies_by_id(request)
 
-@copies_blueprint.get("/")
-async def list_copies(request):
+@copies_blueprint.route("/getallcopies",methods=["GET"])
+async def list_all_copies(request):
     """Handles listing all copies."""
-    return response.json({"message": "List all copies"})
+    return await CopiesServices.view_copies(request)
 
-@copies_blueprint.put("/<copy_id:int>")
-async def update_copy(request, copy_id):
+@copies_blueprint.route("/getbyprintno",methods=["GET"])
+async def list_copies_byprintno(request):
+    """Handles listing all copies."""
+    return await CopiesServices.view_copies_by_print_no(request)
+
+
+
+@copies_blueprint.route("/getbylocation",methods=["GET"])
+async def list_copies_bylocation(request):
+    """Handles listing all copies."""
+    return await CopiesServices.view_copies_by_location(request)
+
+
+
+@copies_blueprint.route("/getbyavailability",methods=["GET"])
+async def list_copies_byavailability(request):
+    """Handles listing all copies."""
+    return await CopiesServices.view_copies_by_availability(request)
+
+
+@copies_blueprint.route("/getbyadditiondate",methods=["GET"])
+async def list_copies_byadditiondate(request):
+    """Handles listing all copies."""
+    return await CopiesServices.view_copies_by_additiondate(request)
+
+
+@copies_blueprint.route("/updatecopybyid",methods=["PUT"])
+async def update_copy(request):
     """Handles updating a specific copy."""
-    return response.json({"message": f"Update copy with ID {copy_id}"})
+    return  await CopiesServices.update_copy(request)
 
-@copies_blueprint.delete("/<copy_id:int>")
-async def delete_copy(request, copy_id):
+@copies_blueprint.route("/deletecopybyid",methods=["DELETE"])
+async def delete_copy(request):
     """Handles deleting a specific copy."""
-    return response.json({"message": f"Delete copy with ID {copy_id}"})
+    return  await CopiesServices.delete_copy(request)

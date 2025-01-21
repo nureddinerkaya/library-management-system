@@ -7,12 +7,14 @@ class BookEntity(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String(255), nullable=False)
-    authors = Column(String(255), nullable=True)
-    publisher = Column(String(255), nullable=True)
-    category = Column(String(255), nullable=True)
+    authors = Column(String(255), nullable=False)
+    publisher = Column(String(255), nullable=False)
+    category = Column(String(255), nullable=False)
     date = Column(Date, nullable=True)
     isbn = Column(String(255), nullable=True)
-    pages = Column(Integer, nullable=True)
+    pages = Column(Integer, nullable=False)
+    stock=Column(Integer, nullable=False)
+
 
     def to_dict(self):
         return {
@@ -23,7 +25,8 @@ class BookEntity(Base):
             "category": self.category,
             "date": self.date.isoformat() if self.date else None,
             "isbn": self.isbn,
-            "pages": self.pages
+            "pages": self.pages,
+            "stock":self.stock
         }
 
     @classmethod
@@ -37,5 +40,6 @@ class BookEntity(Base):
             publisher=data.get("publisher"),
             category=data.get("category"),
             date=data.get("date"),
-            pages=data.get("pages")
+            pages=data.get("pages"),
+            stock=0
         )
