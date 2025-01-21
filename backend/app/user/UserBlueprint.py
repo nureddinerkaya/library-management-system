@@ -14,7 +14,7 @@ async def get_users(request):
 
 
 @bp.route("/getById", methods=["GET"])
-async def get_user(request):
+async def get_user_by_id(request):
     # Example: GET /getById?id=123
     return await UserService.get_user_by_id(request)
 
@@ -24,13 +24,11 @@ async def add_user(request):
     # Example: POST /add
     # Request Body (JSON):
     # {
-    #     "id" :
-    #     "username":
-    #     "name" :
-    #     "password":
-    #     "type":
-    #     "phone":
-    #     "signupDate":
+    #     "username": "nureddin",
+    #     "name" : "Muharrem Nureddin Erkaya",
+    #     "password": "sifre123",
+    #     "type": "admin",
+    #     "phone": "551 123 45 67"
     # }
     return await UserService.add_user(request)
 

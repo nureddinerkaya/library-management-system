@@ -24,10 +24,10 @@ class BookService:
         with SessionLocal() as session:
             try:
                 book_id = int(request.args.get("id"))
-                book = BookService.find_by_id(id)
+                book = await BookService.find_by_id(book_id)
                 if book:
                     result = book.to_dict()
-                    return json({"status": "success", "data": result})
+                    return json(result)
                 return json({"status": "error", "message": "BookEntity not found"})
             except Exception as e:
                 return json({"status": "error", "message": str(e)})
