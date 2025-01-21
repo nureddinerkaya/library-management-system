@@ -14,14 +14,20 @@ class BookService:
             return json(books)
 
     @staticmethod
+    async def find_by_id(id):
+        with SessionLocal() as session:
+            book = session.query(BookEntity).filter(BookEntity.id == id).first()
+            return book
+
+    @staticmethod
     async def get_book_by_id(request):
         with SessionLocal() as session:
             try:
                 book_id = int(request.args.get("id"))
-                book = session.query(BookEntity).filter_by(id=book_id).first()
+                book = await BookService.find_by_id(book_id)
                 if book:
                     result = book.to_dict()
-                    return json({"status": "success", "data": result})
+                    return json(result)
                 return json({"status": "error", "message": "BookEntity not found"})
             except Exception as e:
                 return json({"status": "error", "message": str(e)})
