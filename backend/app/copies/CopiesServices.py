@@ -20,6 +20,7 @@ class CopiesServices:
             session.add(new_copy)
             book=await BookService.find_by_id(data["book"])
             book.stock+=1
+            session.add(book)
             session.commit()
 
 
@@ -123,10 +124,14 @@ class CopiesServices:
         session = SessionLocal()
         try:
             copy_id = int(request.args.get("id"))
-            book = session.query(Copies).filter_by(id=copy_id).first()
-            if not book:
+            copy =  session.query(Copies).filter_by(id=copy_id).first()
+            if not copy:
                 return json({"status": "error", "message": "Copy not found"})
-            session.delete(book)
+            session.delete(copy)
+            book_id= copy.book
+            book = await BookService.find_by_id(book_id)
+            book.stock -= 1
+            session.add(book)
             session.commit()
             return json({"status": "success", "message": "Copy deleted successfully"})
         except Exception as e:
