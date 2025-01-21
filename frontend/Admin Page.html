@@ -51,7 +51,7 @@
         }
 
         .main {
-            margin-left: 220px;
+            margin-left: 200px;
             padding: 20px;
         }
 
@@ -156,7 +156,7 @@
                 </tbody>
             </table>
         </div>
-    </div>
+
         <div id="copies" class="tab-content">
                     <h2>Manage Copies</h2>
                     <form id="copyForm">
@@ -224,11 +224,41 @@
                 </table>
             </div>
         </div>
+        
 
         <div id="borrowings" class="tab-content">
             <h2>Manage Borrowings</h2>
-            <p>Manage Borrowings Section Coming Soon!</p>
+            <form id="borrowingsForm">
+                <label for="BorrowingID">Borrowing ID</label>
+                <input type="text" id="BorrowingID" placeholder="Enter Borrowing ID">
+                <br><br>
+                <label for="MemberID">Member ID</label>
+                <input type="text" id="BorrowingMemberID" placeholder="Enter Member ID">
+                <br><br>
+                <label for="BookID">Book ID</label>
+                <input type="text" id="BorrowingBookID" placeholder="Enter Book ID">
+                <br><br>
+                <button type="submit">Add Borrowing</button>
+            </form>
+            <br>
+        
+            <h3>Borrowings List</h3>
+            <table border="1" width="100%">
+                <thead>
+                    <tr>
+                        <th>Borrowing ID</th>
+                        <th>Member ID</th>
+                        <th>Book ID</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="borrowingsTableBody">
+                    <!-- Borrowing records will be dynamically loaded here -->
+                </tbody>
+            </table>
         </div>
+        
     </div>
 
     <script>
@@ -272,6 +302,7 @@
 
         // Initialize first tab
         showTab('books');
+
 /// Example member data
 const members = [
     { name: "John", lastName: "Doe", id: "M001", department: "IT" },
@@ -327,6 +358,61 @@ document.getElementById("membersForm").addEventListener("submit", function (e) {
 
 // Display all members on page load
 window.onload = () => displayMembers();
+
+const borrowings = [];
+
+// Add new borrowing
+document.getElementById("borrowingsForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const borrowingID = document.getElementById("BorrowingID").value;
+    const memberID = document.getElementById("BorrowingMemberID").value;
+    const bookID = document.getElementById("BorrowingBookID").value;
+
+    if (borrowingID && memberID && bookID) {
+        borrowings.push({
+            borrowingID,
+            memberID,
+            bookID,
+            status: "pending", // Default status is "pending"
+        });
+        displayBorrowings();
+        alert("Borrowing added successfully!");
+        document.getElementById("borrowingsForm").reset();
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+// Display borrowings
+function displayBorrowings() {
+    const borrowingsTableBody = document.getElementById("borrowingsTableBody");
+    borrowingsTableBody.innerHTML = ""; // Clear existing rows
+
+    borrowings.forEach((borrowing, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${borrowing.borrowingID}</td>
+            <td>${borrowing.memberID}</td>
+            <td>${borrowing.bookID}</td>
+            <td>${borrowing.status}</td>
+            <td>
+                ${borrowing.status === "pending" ? `<button onclick="updateStatus(${index}, 'active')">Approve</button>` : ""}
+                ${borrowing.status === "active" ? `<button onclick="updateStatus(${index}, 'returned')">Return</button>` : ""}
+                ${borrowing.status === "active" ? `<button onclick="updateStatus(${index}, 'overdue')">Mark Overdue</button>` : ""}
+            </td>
+        `;
+        borrowingsTableBody.appendChild(row);
+    });
+}
+
+// Update borrowing status
+function updateStatus(index, newStatus) {
+    borrowings[index].status = newStatus;
+    displayBorrowings();
+}
+
     </script>
 </body>
 </html>
+
