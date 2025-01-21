@@ -14,11 +14,17 @@ class BookService:
             return json(books)
 
     @staticmethod
+    async def find_by_id(id):
+        with SessionLocal() as session:
+            book = session.query(BookEntity).filter(BookEntity.id == id).first()
+            return book
+
+    @staticmethod
     async def get_book_by_id(request):
         with SessionLocal() as session:
             try:
                 book_id = int(request.args.get("id"))
-                book = session.query(BookEntity).filter_by(id=book_id).first()
+                book = BookService.find_by_id(id)
                 if book:
                     result = book.to_dict()
                     return json({"status": "success", "data": result})

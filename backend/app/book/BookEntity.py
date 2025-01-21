@@ -29,6 +29,7 @@ class BookEntity(Base):
     @classmethod
     def from_dict(cls, data):
         #cls demek class'ın kendisi demek. JSON olarak gönderilen isteği
+        #yorumun yarısı kesilmiş ama objeye dönüştürüyo diyecektim herhalde
         return cls(
             title=data["title"],
             authors=data.get("authors"),

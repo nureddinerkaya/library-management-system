@@ -60,7 +60,7 @@ async def add_book(request):
     #     "isbn": "0-061-96436-0",
     #     "publisher": "Publisher Name",
     #     "category": "Literature",
-    #     "date":"1992-12-28",
+    #     "date":"1992-12-28",1.	Introduction
     #     "pages":192
     # }
     return await BookService.add_book(request)
