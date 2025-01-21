@@ -1,5 +1,6 @@
 from xmlrpc.client import DateTime
 
+from dateutil.relativedelta import relativedelta
 from sqlalchemy import Column, Integer, String, Date
 from backend.database import Base
 
@@ -45,5 +46,5 @@ class UserEntity(Base):
             email=data["email"],
             signupDate=data["signupDate"],
             renevalDate=data["renevalDate"],
-            expirationDate=data["expirationDate"],
+            expirationDate=data["renevalDate"] + relativedelta(years=1),
         )

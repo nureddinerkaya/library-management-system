@@ -24,13 +24,13 @@ async def add_user(request):
     # Example: POST /add
     # Request Body (JSON):
     # {
-    #     "title": "New User",
-    #     "authors": "Jane Austen",
-    #     "isbn": "0-061-96436-0",
-    #     "publisher": "Publisher Name",
-    #     "category": "Literature",
-    #     "date":"1992-12-28",1.	Introduction
-    #     "pages":192
+    #     "id" :
+    #     "username":
+    #     "name" :
+    #     "password":
+    #     "type":
+    #     "phone":
+    #     "signupDate":
     # }
     return await UserService.add_user(request)
 
@@ -40,9 +40,8 @@ async def update_user(request):
     # Example: PUT /update
     # Request Body (JSON):
     # {
-    #     "id": 123,
-    #     "title": "Updated User Title",
-    #     "author": "Updated Author Name"
+    #     "id":
+    #     "güncellenecek sütün":
     # }
     return await UserService.update_user(request)
 
