@@ -1,5 +1,3 @@
-from xmlrpc.client import DateTime
-
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import Column, Integer, String, Date
 from backend.database import Base
@@ -15,9 +13,9 @@ class UserEntity(Base):
     type = Column(String, nullable=False)
     phone = Column(String, nullable=False)
     email = Column(String)
-    signupDate = Column(DateTime, nullable=False)
-    renevalDate = Column(DateTime)
-    expirationDate = Column(DateTime)
+    signupDate = Column(Date, nullable=False)
+    renevalDate = Column(Date)
+    expirationDate = Column(Date)
 
     def to_dict(self):
         return {
