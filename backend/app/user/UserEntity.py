@@ -1,3 +1,5 @@
+from datetime import date
+
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import Column, Integer, String, Date
 from backend.database import Base
@@ -26,9 +28,9 @@ class UserEntity(Base):
             "type": self.type,
             "phone": self.phone,
             "email": self.email,
-            "signupDate": self.signupDate,
-            "renevalDate": self.renevalDate,
-            "expirationDate": self.expirationDate,
+            "signupDate": self.signupDate.isoformat() if self.signupDate else None,
+            "renevalDate": self.renevalDate.isoformat() if self.renevalDate else None,
+            "expirationDate": self.expirationDate.isoformat() if self.expirationDate else None,
         }
 
     @classmethod
@@ -41,8 +43,28 @@ class UserEntity(Base):
             password=data["password"],
             type=data["type"],
             phone=data["phone"],
-            email=data["email"],
-            signupDate=data["signupDate"],
-            renevalDate=data["renevalDate"],
-            expirationDate=data["renevalDate"] + relativedelta(years=1),
+            email=data["email"] if "email" in data else None,
+            signupDate=data.get("signupDate", date.today()),  # Use current date if not provided
+            renevalDate=data["renevalDate"] if "renevalDate" in data else None,
+            expirationDate=(data.get("signupDate", date.today()) + relativedelta(years=1)),
         )
+
+#    @classmethod
+#    def put_from_dict(cls, data):
+#        #cls demek class'ın kendisi demek. JSON olarak gönderilen isteği
+#        #yorumun yarısı kesilmiş ama objeye dönüştürüyo diyecektim herhalde
+#        return cls(
+#            username=data["username"],
+#            name=data["name"],
+#            password=data["password"],
+#            type=data["type"],
+#            phone=data["phone"],
+#            email=data["email"],
+#            signupDate=data["signupDate"],
+#            renevalDate=data["renevalDate"] if "renevalDate" in data else None,
+#            expirationDate=(
+#                data["renevalDate"] + relativedelta(years=1)
+#                if "renevalDate" in data and data["renevalDate"]
+#                else None
+#            ),
+#        )

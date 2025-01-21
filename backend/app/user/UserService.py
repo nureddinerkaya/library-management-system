@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from dateutil.relativedelta import relativedelta
 from sanic import json, text
 
 from backend.app.user.UserEntity import UserEntity
@@ -11,6 +14,7 @@ class UserService:
         with SessionLocal() as session:
             results = session.query(UserEntity).all()
             users = [user.to_dict() for user in results]
+            session.close()
             return json(users)
 
     @staticmethod
@@ -24,10 +28,10 @@ class UserService:
         with SessionLocal() as session:
             try:
                 user_id = int(request.args.get("id"))
-                user = UserService.find_by_id(id)
+                user = await UserService.find_by_id(user_id)
                 if user:
                     result = user.to_dict()
-                    return json({"status": "success", "data": result})
+                    return json(result)
                 return json({"status": "error", "message": "UserEntity not found"})
             except Exception as e:
                 return json({"status": "error", "message": str(e)})
@@ -61,11 +65,15 @@ class UserService:
             for key, value in data.items():
                 if hasattr(user, key):
                     setattr(user, key, value)
+            if "renevalDate" in data and data["renevalDate"]:
+                setattr(user, "renevalDate", data["renevalDate"])
+                renevalDate = datetime.strptime(data["renevalDate"], "%Y-%m-%d").date()
+                setattr(user, "expirationDate", renevalDate + relativedelta(years=1))
             session.commit()
             return text("{)status: success, message: UserEntity updated successfully")
         except Exception as e:
             session.rollback()
-            return text(str(e))
+            return text("exception", str(e))
         finally:
             session.close()
 
