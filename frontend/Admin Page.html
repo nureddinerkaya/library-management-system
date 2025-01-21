@@ -156,7 +156,7 @@
                 </tbody>
             </table>
         </div>
-
+    </div>
         <div id="copies" class="tab-content">
                     <h2>Manage Copies</h2>
                     <form id="copyForm">
@@ -179,7 +179,50 @@
 
         <div id="members" class="tab-content">
             <h2>Manage Members</h2>
-            <p>Manage Members Section Coming Soon!</p>
+            <form id="membersForm">
+                <label for="MemberName">Member Name:</label>
+                <input type="text" id="MemberName" placeholder="Enter User Name">
+                <br><br>
+                <label for="MemberLastName">Member Last Name:</label>
+                <input type="text" id="MemberLastName" placeholder="Enter User Last Name">
+                <br><br>
+                <label for="MemberID">Member ID:</label>
+                <input type="text" id="MemberID" placeholder="Enter User ID">
+                <br><br>
+                <label for="MemberDepartment">Member Department:</label>
+                <input type="text" id="MemberDepartment" placeholder="Enter User Department">
+                <br><br>
+                <button type="submit">Add Member</button>
+            </form>
+            
+            <div>
+                <h3>Search Members</h3>
+                <label for="searchCriteria">Search By:</label>
+                <select id="searchCriteria">
+                    <option value="name">Name</option>
+                    <option value="lastName">Last Name</option>
+                    <option value="id">ID</option>
+                    <option value="department"> Department</option>
+                </select>
+                <input type="text" id="searchBox" placeholder="Enter search term">
+            </div>
+            
+            <div id="membersList">
+                <h3>Members List</h3>
+                <table border="1" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Last Name</th>
+                            <th>ID</th>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody">
+                        <!-- Member rows will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div id="borrowings" class="tab-content">
@@ -229,6 +272,61 @@
 
         // Initialize first tab
         showTab('books');
+/// Example member data
+const members = [
+    { name: "John", lastName: "Doe", id: "M001", department: "IT" },
+    { name: "Jane", lastName: "Smith", id: "M002", department: "HR" },
+    { name: "Alice", lastName: "Johnson", id: "M003", department: "Marketing" },
+    { name: "Bob", lastName: "Brown", id: "M004", department: "Finance" },
+];
+
+// Populate members list in the table
+function displayMembers(filter = "", criteria = "name") {
+    const membersTableBody = document.getElementById("membersTableBody");
+    membersTableBody.innerHTML = ""; // Clear existing rows
+
+    members
+        .filter(member => member[criteria].toLowerCase().includes(filter.toLowerCase()))
+        .forEach(member => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${member.name}</td>
+                <td>${member.lastName}</td>
+                <td>${member.id}</td>
+                <td>${member.department}</td>
+            `;
+            membersTableBody.appendChild(row);
+        });
+}
+
+// Search members
+document.getElementById("searchBox").addEventListener("input", function () {
+    const searchTerm = this.value;
+    const criteria = document.getElementById("searchCriteria").value;
+    displayMembers(searchTerm, criteria);
+});
+
+// Add new member
+document.getElementById("membersForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("MemberName").value;
+    const lastName = document.getElementById("MemberLastName").value;
+    const id = document.getElementById("MemberID").value;
+    const department = document.getElementById("MemberDepartment").value;
+
+    if (name && lastName && id && department) {
+        members.push({ name, lastName, id, department });
+        displayMembers();
+        alert("Member added successfully!");
+        document.getElementById("membersForm").reset();
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+// Display all members on page load
+window.onload = () => displayMembers();
     </script>
 </body>
 </html>
