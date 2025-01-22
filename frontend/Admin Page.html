@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            background-color: gray;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 150px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #575757;
+            padding-left: 10px;
+        }
+
+        .main {
+            margin-left: 200px;
+            padding: 20px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        form {
+            margin-bottom: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: gray;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: gray;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f4f4f9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Library Management System - Admin Panel</h1>
+    </header>
+
+    <div class="sidebar">
+        <ul>
+            <li><a href="#" onclick="showTab('books')">Manage Books</a></li>
+            <li><a href="#" onclick="showTab('copies')">Manage Copies</a></li>
+            <li><a href="#" onclick="showTab('members')">Manage Members</a></li>
+            <li><a href="#" onclick="showTab('borrowings')">Manage Borrowings</a></li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div id="books" class="tab-content">
+            <h2>Manage Books</h2>
+            <form id="addBookForm">
+                <label for="Upload İmage"> Upload İmage</label>
+                <input type="file" id="Upload İmage" placeholder="upload upload image">
+                <label for="bookTitle">Book Title</label>
+                <input type="text" id="bookTitle" placeholder="Enter book title">
+                <label for="bookAuthor">Author</label>
+                <input type="text" id="bookAuthor" placeholder="Enter author name">
+                <label for="bookStock">Stock</label>
+                <input type="number" id="bookStock" placeholder="Enter stock amount">
+                <button type="button" onclick="addBook()">Add Book</button>
+            </form>
+            <table id="booksTable">
+                <thead>
+                    <tr>
+                        <th>İmage</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Book rows go here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="copies" class="tab-content">
+                    <h2>Manage Copies</h2>
+                    <form id="copyForm">
+                        <label for="copyTitle">Copy Title:</label>
+                        <input type="text" id="copyTitle" placeholder="Enter copy title" required>
+                        <br><br>
+                        <label for="copyPDF">Upload PDF:</label>
+                        <input type="file" id="copyPDF" accept=".pdf" required>
+                        <br><br>
+                        <button type="submit">Add Copy</button>
+                    </form>
+                    <div id="copyList">
+                        <h3>Copies List</h3>
+                        <ul id="copyListItems"></ul>
+                    </div>
+                
+            </form>
+            
+        </div>
+
+        <div id="members" class="tab-content">
+            <h2>Manage Members</h2>
+            <form id="membersForm">
+                <label for="MemberName">Member Name:</label>
+                <input type="text" id="MemberName" placeholder="Enter User Name">
+                <br><br>
+                <label for="MemberLastName">Member Last Name:</label>
+                <input type="text" id="MemberLastName" placeholder="Enter User Last Name">
+                <br><br>
+                <label for="MemberID">Member ID:</label>
+                <input type="text" id="MemberID" placeholder="Enter User ID">
+                <br><br>
+                <label for="MemberDepartment">Member Department:</label>
+                <input type="text" id="MemberDepartment" placeholder="Enter User Department">
+                <br><br>
+                <button type="submit">Add Member</button>
+            </form>
+            
+            <div>
+                <h3>Search Members</h3>
+                <label for="searchCriteria">Search By:</label>
+                <select id="searchCriteria">
+                    <option value="name">Name</option>
+                    <option value="lastName">Last Name</option>
+                    <option value="id">ID</option>
+                    <option value="department"> Department</option>
+                </select>
+                <input type="text" id="searchBox" placeholder="Enter search term">
+            </div>
+            
+            <div id="membersList">
+                <h3>Members List</h3>
+                <table border="1" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Last Name</th>
+                            <th>ID</th>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody">
+                        <!-- Member rows will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        
+
+        <div id="borrowings" class="tab-content">
+            <h2>Manage Borrowings</h2>
+            <form id="borrowingsForm">
+                <label for="BorrowingID">Borrowing ID</label>
+                <input type="text" id="BorrowingID" placeholder="Enter Borrowing ID">
+                <br><br>
+                <label for="MemberID">Member ID</label>
+                <input type="text" id="BorrowingMemberID" placeholder="Enter Member ID">
+                <br><br>
+                <label for="BookID">Book ID</label>
+                <input type="text" id="BorrowingBookID" placeholder="Enter Book ID">
+                <br><br>
+                <button type="submit">Add Borrowing</button>
+            </form>
+            <br>
+            <div>
+                <h3>Filter Borrowings by Status</h3>
+                <label for="statusFilter">Select Status:</label>
+                <select id="statusFilter" onchange="filterBorrowingsByStatus()">
+                    <option value="all">All</option>
+                    <option value="pending">Borrowed</option>
+                    <option value="returned">Returned</option>
+                    <option value="overdue">Active</option>
+                    <option value="overdue">Pending</option>
+                </select>
+            </div>
+            
+            <h3>Borrowings List</h3>
+            <table border="1" width="100%">
+                <thead>
+                    <tr>
+                        <th>Borrowing ID</th>
+                        <th>Member ID</th>
+                        <th>Book ID</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="borrowingsTableBody">
+                    <!-- Borrowing records will be dynamically loaded here -->
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        }
+
+        function addBook() {
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('bookAuthor').value;
+            const stock = document.getElementById('bookStock').value;
+
+            if (title && author && stock) {
+                const tableBody = document.querySelector('#booksTable tbody');
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${title}</td>
+                    <td>${author}</td>
+                    <td>${stock}</td>
+                    <td><button onclick="deleteBook(this)">Delete</button></td>
+                `;
+
+                tableBody.appendChild(newRow);
+                document.getElementById('addBookForm').reset();
+            } else {
+                alert('Please fill all fields.');
+            }
+        }
+
+        function deleteBook(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+        }
+
+        // Initialize first tab
+        showTab('books');
+
+/// Example member data
+const members = [
+    { name: "John", lastName: "Doe", id: "M001", department: "IT" },
+    { name: "Jane", lastName: "Smith", id: "M002", department: "HR" },
+    { name: "Alice", lastName: "Johnson", id: "M003", department: "Marketing" },
+    { name: "Bob", lastName: "Brown", id: "M004", department: "Finance" },
+];
+
+// Populate members list in the table
+function displayMembers(filter = "", criteria = "name") {
+    const membersTableBody = document.getElementById("membersTableBody");
+    membersTableBody.innerHTML = ""; // Clear existing rows
+
+    members
+        .filter(member => member[criteria].toLowerCase().includes(filter.toLowerCase()))
+        .forEach(member => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${member.name}</td>
+                <td>${member.lastName}</td>
+                <td>${member.id}</td>
+                <td>${member.department}</td>
+            `;
+            membersTableBody.appendChild(row);
+        });
+}
+
+// Search members
+document.getElementById("searchBox").addEventListener("input", function () {
+    const searchTerm = this.value;
+    const criteria = document.getElementById("searchCriteria").value;
+    displayMembers(searchTerm, criteria);
+});
+
+// Add new member
+document.getElementById("membersForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("MemberName").value;
+    const lastName = document.getElementById("MemberLastName").value;
+    const id = document.getElementById("MemberID").value;
+    const department = document.getElementById("MemberDepartment").value;
+
+    if (name && lastName && id && department) {
+        members.push({ name, lastName, id, department });
+        displayMembers();
+        alert("Member added successfully!");
+        document.getElementById("membersForm").reset();
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+// Display all members on page load
+window.onload = () => displayMembers();
+
+const borrowings = [];
+
+// Add new borrowing
+document.getElementById("borrowingsForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const borrowingID = document.getElementById("BorrowingID").value;
+    const memberID = document.getElementById("BorrowingMemberID").value;
+    const bookID = document.getElementById("BorrowingBookID").value;
+
+    if (borrowingID && memberID && bookID) {
+        borrowings.push({
+            borrowingID,
+            memberID,
+            bookID,
+            status: "pending", // Default status is "pending"
+        });
+        displayBorrowings();
+        alert("Borrowing added successfully!");
+        document.getElementById("borrowingsForm").reset();
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+// Display borrowings
+function displayBorrowings() {
+    const borrowingsTableBody = document.getElementById("borrowingsTableBody");
+    borrowingsTableBody.innerHTML = ""; // Clear existing rows
+
+    borrowings.forEach((borrowing, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${borrowing.borrowingID}</td>
+            <td>${borrowing.memberID}</td>
+            <td>${borrowing.bookID}</td>
+            <td>${borrowing.status}</td>
+            <td>
+                ${borrowing.status === "pending" ? `<button onclick="updateStatus(${index}, 'active')">Approve</button>` : ""}
+                ${borrowing.status === "active" ? `<button onclick="updateStatus(${index}, 'returned')">Return</button>` : ""}
+                ${borrowing.status === "active" ? `<button onclick="updateStatus(${index}, 'overdue')">Mark Overdue</button>` : ""}
+            </td>
+        `;
+        borrowingsTableBody.appendChild(row);
+    });
+}
+
+// Update borrowing status
+function updateStatus(index, newStatus) {
+    borrowings[index].status = newStatus;
+    displayBorrowings();
+}
+function filterBorrowingsByStatus() {
+    const selectedStatus = document.getElementById("statusFilter").value;
+    const borrowingsTableBody = document.getElementById("borrowingsTableBody");
+    borrowingsTableBody.innerHTML = ""; // Clear the existing table rows
+
+    borrowings
+        .filter(borrowing => selectedStatus === "all" || borrowing.status === selectedStatus)
+        .forEach((borrowing, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${borrowing.borrowingID}</td>
+                <td>${borrowing.memberID}</td>
+                <td>${borrowing.bookID}</td>
+                <td>${borrowing.status}</td>
+                <td>
+                    ${borrowing.status === "pending" ? `<button onclick="updateStatus(${index}, 'active')">Approve</button>` : ""}
+                    ${borrowing.status === "active" ? `<button onclick="updateStatus(${index}, 'returned')">Return</button>` : ""}
+                    ${borrowing.status === "active" ? `<button onclick="updateStatus(${index}, 'overdue')">Mark Overdue</button>` : ""}
+                </td>
+            `;
+            borrowingsTableBody.appendChild(row);
+        });
+
+    // Show a message if no results are found
+    if (borrowingsTableBody.innerHTML === "") {
+        const noResultsRow = document.createElement("tr");
+        noResultsRow.innerHTML = `<td colspan="5" style="text-align: center;">No borrowings found for the selected status.</td>`;
+        borrowingsTableBody.appendChild(noResultsRow);
+    }
+}
+function displayBorrowings() {
+    const borrowingsTableBody = document.getElementById("borrowingsTableBody");
+    borrowingsTableBody.innerHTML = ""; // Clear existing rows
+
+    borrowings.forEach((borrowing, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${borrowing.borrowingID}</td>
+            <td>${borrowing.memberID}</td>
+            <td>${borrowing.bookID}</td>
+            <td>${borrowing.status}</td>
+            <td>
+                <button onclick="deleteBorrowing(${index})">Delete</button>
+                <button onclick="updateStatus(${index}, 'active')">Active</button>
+                <button onclick="updateStatus(${index}, 'returned')">Returned</button>
+                <button onclick="editBorrowing(${index})">Edit</button>
+            </td>
+        `;
+        borrowingsTableBody.appendChild(row);
+    });
+
+    // Show a message if no results are found
+    if (borrowingsTableBody.innerHTML === "") {
+        const noResultsRow = document.createElement("tr");
+        noResultsRow.innerHTML = `<td colspan="5" style="text-align: center;">No borrowings found.</td>`;
+        borrowingsTableBody.appendChild(noResultsRow);
+    }
+}
+function deleteBorrowing(index) {
+    const confirmation = confirm("Are you sure you want to delete this borrowing?");
+    if (confirmation) {
+        borrowings.splice(index, 1); // Remove the borrowing from the array
+        displayBorrowings(); // Refresh the table
+        alert("Borrowing successfully deleted.");
+    }
+}
+
+function updateStatus(index, newStatus) {
+    borrowings[index].status = newStatus; // Update the status
+    displayBorrowings(); // Refresh the table
+}
+
+function editBorrowing(index) {
+    alert(`Editing borrowing with ID: ${borrowings[index].borrowingID}. Implement edit logic here.`);
+}
+
+    </script>
+</body>
+</html>
