@@ -1,4 +1,4 @@
-from sanic import json, text
+from sanic import json, text, response
 
 from backend.app.image.ImageEntity import ImageEntity
 from backend.database import SessionLocal
@@ -23,21 +23,28 @@ class ImageService:
     async def get_image_by_id(request):
         with SessionLocal() as session:
             try:
+                # Fetch the image by ID
                 image_id = int(request.args.get("id"))
-                image = await ImageService.find_by_id(image_id)
-                if image:
-                    result = image.to_dict()
-                    return json({"status": "success", "data": result})
-                return json({"status": "error", "message": "ImageEntity not found"})
+                image = session.query(ImageEntity).filter_by(id=image_id).first()
+                if not image:
+                    return response.json({"error": "Image not found"}, status=404)
+
+                # Return the image data
+                headers = {
+                    "Content-Type": image.mime_type,
+                    "Content-Disposition": f"inline; filename=image_{image.id}"
+                }
+                return response.raw(image.data, headers=headers)
             except Exception as e:
-                return json({"status": "error", "message": str(e)})
+                return response.json({"error": str(e)}, status=500)
+            finally:
+                session.close()
 
     @staticmethod
     async def add_image(request):
         with SessionLocal() as session:
             try:
-                data = request.json #bu fonksiyon json payload'ını alıp python dict'ine dönüştürüyormuş
-                new_image = ImageEntity.from_dict(data)
+                new_image = ImageEntity.from_dict(request)
                 session.add(new_image)
                 session.commit()
                 return text("status: success, message" "ImageEntity added successfully")
@@ -46,6 +53,7 @@ class ImageService:
                 return text("Bir hata oldu, yaptığın kayıt edilmedi", str(e))
             finally:
                 session.close()
+
 
     @staticmethod
     async def update_image(request):
