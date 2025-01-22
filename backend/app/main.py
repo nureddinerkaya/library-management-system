@@ -1,6 +1,6 @@
 from sanic import Sanic, text
 from backend.database import Base, engine
-import book.BookBlueprint
+# import book.bookBlueprint
 import user.UserBlueprint
 import  copies.CopiesBlueprint
 # ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ
@@ -10,12 +10,12 @@ import  copies.CopiesBlueprint
 # Eğer hem Entity, hem de Blueprint import edilirse tablo oluşturma fonksyonu
 # Entity'yi iki kere gördüğünden hata veriyor.
 
-#from book.BookEntity import BookEntity
+# from book.BookEntity import git inity
 
 app = Sanic("LibraryManagementApp")
 
 #Blueprintleri hem yukarda import etmek, hem de burdan belletmek gerekiyor
-app.blueprint(book.BookBlueprint.bp)
+# app.blueprint(book.BookBlueprint.bp)
 app.blueprint(user.UserBlueprint.bp)
 app.blueprint(copies.CopiesBlueprint.copies_blueprint )
 
