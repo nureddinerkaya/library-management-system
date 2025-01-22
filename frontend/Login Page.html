@@ -115,13 +115,18 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            if (username === 'admin' && password === '1234') {
-                alert('Login successful!');
-                // Redirect to home page
-                window.location.href = 'Admin Page.html';
-            } else {
-                alert('Invalid username or password.');
-            }
+
+        if (username === 'admin' && password === '1234') {
+            // Redirect to admin page
+             window.location.href = 'Admin Page.html';
+        } else if (username === "user" && password === "2345") {
+            // Redirect to user page
+             window.location.href = "home.html";
+        } else {
+            // Invalid credentials, show an error message or alert
+             alert("Invalid username or password");
+        }       
+
         });
 
         // Handle Sign Up button click
@@ -132,5 +137,8 @@
     </script>
 </body>
 </html>
+
+
+
 
 
