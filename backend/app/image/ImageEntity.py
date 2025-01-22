@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, LargeBinary
+from sqlalchemy import Column, Integer, String, Date, LargeBinary, ForeignKey
 
 from backend.app.book.BookEntity import BookEntity
 from backend.app.book.BookService import BookService
@@ -9,7 +9,7 @@ class ImageEntity(Base):
     __tablename__ = 'images'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    book = Column(BookEntity, nullable=False)
+    book = Column(Integer, ForeignKey(BookEntity.id), nullable=False)
     data = Column(LargeBinary, nullable=False)
     mime_type = Column(String, nullable=False)
 

@@ -24,7 +24,7 @@ class ImageService:
         with SessionLocal() as session:
             try:
                 image_id = int(request.args.get("id"))
-                image = ImageService.find_by_id(id)
+                image = await ImageService.find_by_id(image_id)
                 if image:
                     result = image.to_dict()
                     return json({"status": "success", "data": result})

@@ -2,6 +2,7 @@ from sanic import Sanic, text
 from backend.database import Base, engine
 import book.BookBlueprint
 import user.UserBlueprint
+import image.ImageBlueprint
 
 # ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ
 # Eğer oluşturulacak tablonun Blueprint'i import edilmemişse
@@ -17,6 +18,7 @@ app = Sanic("LibraryManagementApp")
 #Blueprintleri hem yukarda import etmek, hem de burdan belletmek gerekiyor
 app.blueprint(book.BookBlueprint.bp)
 app.blueprint(user.UserBlueprint.bp)
+app.blueprint(image.ImageBlueprint.bp)
 
 @app.listener("before_server_start")
 async def setup_db(app, loop):

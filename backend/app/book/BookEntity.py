@@ -32,10 +32,10 @@ class BookEntity(Base):
         #yorumun yarısı kesilmiş ama objeye dönüştürüyo diyecektim herhalde
         return cls(
             title=data["title"],
-            authors=data.get("authors"),
-            isbn=data.get("isbn"),
-            publisher=data.get("publisher"),
-            category=data.get("category"),
-            date=data.get("date"),
-            pages=data.get("pages")
+            authors=data.get("authors") if "authors" in data else None,
+            isbn=data.get("isbn")if "isbn" in data else None,
+            publisher=data.get("publisher")if "publisher" in data else None,
+            category=data.get("category")if "category" in data else None,
+            date=data.get("date")if "date" in data else None,
+            pages=data.get("pages")if "pages" in data else None
         )
