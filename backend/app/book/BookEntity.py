@@ -1,4 +1,9 @@
-from sqlalchemy import Column, Integer, String, Date
+import base64
+
+from sqlalchemy import Column, Integer, String, Date, ForeignKey
+
+from backend.app.image.ImageEntity import ImageEntity
+from backend.app.image.ImageService import ImageService
 from backend.database import Base
 
 
@@ -13,8 +18,11 @@ class BookEntity(Base):
     date = Column(Date, nullable=True)
     isbn = Column(String(255), nullable=True)
     pages = Column(Integer, nullable=True)
+    stock = Column(Integer, nullable=False)
+    image_id = Column(Integer, ForeignKey(ImageEntity.id), nullable=True)
 
-    def to_dict(self):
+    async def to_dict(self):
+        image = await ImageService.find_by_id(self.image_id)
         return {
             "id": self.id,
             "title": self.title,
@@ -23,7 +31,9 @@ class BookEntity(Base):
             "category": self.category,
             "date": self.date.isoformat() if self.date else None,
             "isbn": self.isbn,
-            "pages": self.pages
+            "pages": self.pages,
+            "image_data": base64.b64encode(image.data).decode('utf-8') if image else None,
+            "image_mime_type": image.mime_type if image else None,
         }
 
     @classmethod
@@ -37,5 +47,7 @@ class BookEntity(Base):
             publisher=data.get("publisher")if "publisher" in data else None,
             category=data.get("category")if "category" in data else None,
             date=data.get("date")if "date" in data else None,
-            pages=data.get("pages")if "pages" in data else None
+            pages=data.get("pages")if "pages" in data else None,
+            stock=data.get("stock")if "stock" in data else 0,
+            image_id=data.get("image_id")if "image_id" in data else None
         )

@@ -7,10 +7,10 @@ from backend.app.image.ImageService import ImageService
 bp = Blueprint("ImageBlueprint", url_prefix="/api/images")
 
 
-@bp.route("/getAll", methods=["GET"])
-async def get_images(request):
-    # Example: GET /getAll
-    return await ImageService.get_all_images(request)
+#@bp.route("/getAll", methods=["GET"])
+#async def get_images(request):
+#    # Example: GET /getAll
+#    return await ImageService.get_all_images(request)
 
 @bp.route("/getById", methods=["GET"])
 async def get_image(request):

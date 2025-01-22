@@ -6,12 +6,12 @@ from backend.database import SessionLocal
 
 class ImageService:
 
-    @staticmethod
-    async def get_all_images(request):
-        with SessionLocal() as session:
-            results = session.query(ImageEntity).all()
-            images = [image.to_dict() for image in results]
-            return json(images)
+#    @staticmethod
+#    async def get_all_images(request):
+#        with SessionLocal() as session:
+#            results = session.query(ImageEntity).all()
+#            images = [image.to_dict() for image in results]
+#            return json(images)
 
     @staticmethod
     async def find_by_id(id):
@@ -31,6 +31,7 @@ class ImageService:
 
                 # Return the image data
                 headers = {
+                    "image_id": image.id,
                     "Content-Type": image.mime_type,
                     "Content-Disposition": f"inline; filename=image_{image.id}"
                 }
@@ -59,17 +60,17 @@ class ImageService:
     async def update_image(request):
         session = SessionLocal()
         try:
-            data = request.json
-            image_id = data["id"]
+            file = request.files['file'][0]
+            image_id = int(request.form.get("image_id"))
             image = session.query(ImageEntity).filter_by(id=image_id).first()
             if not image:
                 return text("ImageEntity not found")
-
-            for key, value in data.items():
-                if hasattr(image, key):
-                    setattr(image, key, value)
+            if file.body:
+                image.data = file.body
+            if file.type:
+                image.mime_type = file.type
             session.commit()
-            return text("{)status: success, message: ImageEntity updated successfully")
+            return text("{status: success, message: ImageEntity updated successfully")
         except Exception as e:
             session.rollback()
             return text(str(e))
