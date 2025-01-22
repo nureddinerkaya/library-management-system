@@ -3,6 +3,8 @@ from backend.database import Base
 from backend.app.copies.Copies import Copies
 from sqlalchemy.orm import relationship
 from backend.app.user.UserEntity import UserEntity
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class BorrowingEntity(Base):
@@ -32,12 +34,16 @@ class BorrowingEntity(Base):
     def from_dict(cls, data):
         #cls demek class'ın kendisi demek. JSON olarak gönderilen isteği
         #yorumun yarısı kesilmiş ama objeye dönüştürüyo diyecektim herhalde
+        borrow_date = datetime.strptime(data.get("borrow_date"), "%Y-%m-%d").date()
+        expected_date = borrow_date + relativedelta(months=1)
+
+
         return cls(
 
             copy=data.get("copy"),
             member=data.get("member"),
-            borrow_date=data.get("borrow_date"),
-            expected_date=data.get("expected_date"),
+            borrow_date=borrow_date,
+            expected_date=expected_date,
             return_date=data.get("return_date"),
             state="pending"
 

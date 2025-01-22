@@ -59,13 +59,13 @@ class BorrowingService:
 
 
     #EXPECTED DATE GEÇMİŞ AMA STATE RETURNED OLMAMIŞ.
-    #BU METOD HER ÇAĞIRILDIĞINDA BUNLARI SAPTAMAK LAZIM
+    #BU METOD HER ÇAĞIRILDIĞINDA BUNLARIDA KONTROL EDİYORUZ
 
     @staticmethod
     async def get_borrowing_whose_are_overdue(request):
         with SessionLocal() as session:
             try:
-                await overduelari_hesapla()
+                await BorrowingService.overduelari_hesapla()
                 results = session.query(BorrowingEntity).filter(BorrowingEntity.state.ilike("Overdue")).all()
                 if results:
                     records = [record.to_dict() for record in results]
@@ -80,7 +80,7 @@ class BorrowingService:
             try:
                 #expected tarihi şimdiki tarihten geri olan ve state'i returned olmayan satırları bulup liste dönecek query
                 #Bu listeyi dönüp her bir öğenin state'ini overdue yapacak for döngüsü
-                results = session.query(BorrowingEntity).filter(BorrowingEntity.expected < datetime.now(),BorrowingEntity.state != "returned").all()
+                results = session.query(BorrowingEntity).filter(BorrowingEntity.expected_date < datetime.now(),BorrowingEntity.state != "returned").all()
                 for record in results:
                     record.state = "overdue"
                 session.commit()
