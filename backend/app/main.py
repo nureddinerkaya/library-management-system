@@ -1,36 +1,31 @@
 from sanic import Sanic, text
 from backend.database import Base, engine
-# import book.bookBlueprint
 import user.UserBlueprint
-import  copies.CopiesBlueprint
-# ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ
-# Eğer oluşturulacak tablonun Blueprint'i import edilmemişse
-# Entity dosyasının import edilmesi gerek, yoksa tablo oluşmaz.
-# Eper Blueprint import edilmişse Entity import edilmemeli
-# Eğer hem Entity, hem de Blueprint import edilirse tablo oluşturma fonksyonu
-# Entity'yi iki kere gördüğünden hata veriyor.
+import copies.CopiesBlueprint
 
-# from book.BookEntity import git inity
-
+# Sanic Uygulamanızı başlatıyorsunuz
 app = Sanic("LibraryManagementApp")
 
-#Blueprintleri hem yukarda import etmek, hem de burdan belletmek gerekiyor
-# app.blueprint(book.BookBlueprint.bp)
+# Blueprintlerinizi uygulamaya ekliyorsunuz
 app.blueprint(user.UserBlueprint.bp)
-app.blueprint(copies.CopiesBlueprint.copies_blueprint )
+app.blueprint(copies.CopiesBlueprint.copies_blueprint)
 
+# Uygulama başlatılmadan önce veritabanı tablolarını oluşturun
 @app.listener("before_server_start")
 async def setup_db(app, loop):
+    # Veritabanındaki tüm tabloları oluşturuyoruz
     Base.metadata.create_all(bind=engine)
     print("Database tables created successfully.")
 
+# Basit bir test rotası
 @app.get("/")
 async def hello(request):
-    print ("hello")
     return text("Hello, World!")
 
+# Uygulamanın ana çalıştırma bloğu
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
+
 
 
 
