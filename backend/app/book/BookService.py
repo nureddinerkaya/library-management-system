@@ -10,7 +10,7 @@ class BookService:
     async def get_all_books(request):
         with SessionLocal() as session:
             results = session.query(BookEntity).all()
-            books = [book.to_dict() for book in results]
+            books = [await book.to_dict() for book in results]
             return json(books)
 
     @staticmethod
@@ -26,11 +26,12 @@ class BookService:
                 book_id = int(request.args.get("id"))
                 book = await BookService.find_by_id(book_id)
                 if book:
-                    result = book.to_dict()
+                    result = await book.to_dict()
                     return json(result)
                 return json({"status": "error", "message": "BookEntity not found"})
             except Exception as e:
                 return json({"status": "error", "message": str(e)})
+
 
     @staticmethod
     async def add_book(request):
