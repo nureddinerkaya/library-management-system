@@ -71,19 +71,22 @@
             background-color: #0056b3;
         }
 
-        .forgot-password {
-            text-align: center;
-            margin-top: 10px;
+        .show-password {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            margin-top: 5px;
         }
 
-        .forgot-password a {
-            color: #007bff;
-            text-decoration: none;
-            transition: color 0.3s;
+        .show-password input {
+            margin-right: 5px;
         }
 
-        .forgot-password a:hover {
-            color: #0056b3;
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 20px;
+                max-width: 90%;
+            }
         }
     </style>
 </head>
@@ -98,13 +101,14 @@
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <div class="show-password">
+                    <input type="checkbox" id="showPassword"> Show Password
+                </div>
             </div>
             <button type="submit" class="login-button">Login</button>
         </form>
         <button class="signup-button" id="signupButton">Sign Up</button>
-        <div class="forgot-password">
-            <a href="#">Forgot Password?</a>
-        </div>
+        
     </div>
 
     <script>
@@ -115,18 +119,26 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
+            if (username === 'admin' && password === '1234') {
+                // Redirect to admin page
+                window.location.href = 'Admin Page.html';
+            } else if (username === "user" && password === "2345") {
+                // Redirect to user page
+                window.location.href = "home.html";
+            } else {
+                // Invalid credentials, show an error message or alert
+                alert("Invalid username or password. Please try again.");
+            }
+        });
 
-        if (username === 'admin' && password === '1234') {
-            // Redirect to admin page
-             window.location.href = 'Admin Page.html';
-        } else if (username === "user" && password === "2345") {
-            // Redirect to user page
-             window.location.href = "home.html";
-        } else {
-            // Invalid credentials, show an error message or alert
-             alert("Invalid username or password");
-        }       
-
+        // Handle Show Password functionality
+        document.getElementById('showPassword').addEventListener('change', function() {
+            const passwordInput = document.getElementById('password');
+            if (this.checked) {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
         });
 
         // Handle Sign Up button click
@@ -137,8 +149,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
