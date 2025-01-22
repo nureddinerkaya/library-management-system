@@ -3,6 +3,7 @@ from backend.database import Base, engine
 import book.BookBlueprint
 import user.UserBlueprint
 import  copies.CopiesBlueprint
+import borrowing.BorrowingBlueprint
 # ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ
 # Eğer oluşturulacak tablonun Blueprint'i import edilmemişse
 # Entity dosyasının import edilmesi gerek, yoksa tablo oluşmaz.
@@ -18,6 +19,7 @@ app = Sanic("LibraryManagementApp")
 app.blueprint(book.BookBlueprint.bp)
 app.blueprint(user.UserBlueprint.bp)
 app.blueprint(copies.CopiesBlueprint.copies_blueprint )
+app.blueprint(borrowing.BorrowingBlueprint.borrowing_blueprint)
 
 @app.listener("before_server_start")
 async def setup_db(app, loop):
