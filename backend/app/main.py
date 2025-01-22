@@ -2,6 +2,8 @@ from sanic import Sanic, text
 from backend.database import Base, engine
 import book.BookBlueprint
 import user.UserBlueprint
+import image.ImageBlueprint
+import auth.AuthBlueprint
 import  copies.CopiesBlueprint
 import borrowing.BorrowingBlueprint
 # ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ
@@ -19,6 +21,8 @@ app = Sanic("LibraryManagementApp")
 app.blueprint(book.BookBlueprint.bp)
 app.blueprint(user.UserBlueprint.bp)
 app.blueprint(copies.CopiesBlueprint.copies_blueprint )
+app.blueprint(image.ImageBlueprint.bp)
+app.blueprint(auth.AuthBlueprint.bp)
 app.blueprint(borrowing.BorrowingBlueprint.borrowing_blueprint)
 
 @app.listener("before_server_start")
