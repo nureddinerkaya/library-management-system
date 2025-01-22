@@ -57,15 +57,31 @@ class BorrowingService:
             except Exception as e:
                 return json({"status": "error", "message": str(e)})
 
+
+    #EXPECTED DATE GEÇMİŞ AMA STATE RETURNED OLMAMIŞ.
+    #BU METOD HER ÇAĞIRILDIĞINDA BUNLARI SAPTAMAK LAZIM
+
     @staticmethod
     async def get_borrowing_whose_are_overdue(request):
         with SessionLocal() as session:
             try:
+                await overduelari_hesapla()
                 results = session.query(BorrowingEntity).filter(BorrowingEntity.state.ilike("Overdue")).all()
                 if results:
                     records = [record.to_dict() for record in results]
                     return json({"status": "success", "data": records})
                 return json({"status": "error", "message": "No overdue borrowings found"})
+            except Exception as e:
+                return json({"status": "error", "message": str(e)})
+
+    @staticmethod
+    async def overduelari_hesapla():
+        with SessionLocal() as session:
+            try:
+                #expected tarihi şimdiki tarihten geri olan ve state'i returned olmayan satırları bulup liste dönecek query
+                #Bu listeyi dönüp her bir öğenin state'ini overdue yapacak for döngüsü
+                #bunları chatGPT'ye yaptır.
+                #kolay gelsin
             except Exception as e:
                 return json({"status": "error", "message": str(e)})
 
