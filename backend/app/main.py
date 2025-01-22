@@ -3,7 +3,9 @@ from backend.database import Base, engine
 import book.BookBlueprint
 import user.UserBlueprint
 import image.ImageBlueprint
-import  copies.CopiesBlueprint
+import copies.CopiesBlueprint
+import auth.AuthBlueprint
+
 
 # ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ
 # Eğer oluşturulacak tablonun Blueprint'i import edilmemişse
@@ -21,6 +23,7 @@ app.blueprint(book.BookBlueprint.bp)
 app.blueprint(user.UserBlueprint.bp)
 app.blueprint(copies.CopiesBlueprint.copies_blueprint )
 app.blueprint(image.ImageBlueprint.bp)
+app.blueprint(auth.AuthBlueprint.bp)
 
 @app.listener("before_server_start")
 async def setup_db(app, loop):
