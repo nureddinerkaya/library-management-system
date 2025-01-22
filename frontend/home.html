@@ -86,13 +86,30 @@
             cursor: pointer;
         }
         .book button:hover {
-            background-color: gray;
+            background-color: #0056b3;
+        }
+        .book button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
         footer {
             text-align: center;
             padding: 10px;
             background-color: #4CAF50;
             color: white;
+        }
+        .back-button {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 15px;
+            background-color: gray;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -105,17 +122,18 @@
         <div class="sidebar">
             <h3>Categories</h3>
             <ul>
-                <li><a href="#">Fiction</a></li>
-                <li><a href="#">Non-fiction</a></li>
-                <li><a href="#">Science</a></li>
-                <li><a href="#">History</a></li>
-                <li><a href="#">Biography</a></li>
-                <li><a href="#">Fantasy</a></li>
-                <li><a href="#">Mystery</a></li>
+                <li><a href="#" data-category="Fiction">Fiction</a></li>
+                <li><a href="#" data-category="Non-fiction">Non-fiction</a></li>
+                <li><a href="#" data-category="Science">Science</a></li>
+                <li><a href="#" data-category="History">History</a></li>
+                <li><a href="#" data-category="Biography">Biography</a></li>
+                <li><a href="#" data-category="Fantasy">Fantasy</a></li>
+                <li><a href="#" data-category="Mystery">Mystery</a></li>
             </ul>
         </div>
 
         <div class="container">
+            <button class="back-button" id="backButton">Go Back</button>
             <h2>Available Books</h2>
             <div class="books-grid" id="booksGrid">
                 <!-- Books will be dynamically loaded here -->
@@ -124,87 +142,20 @@
     </div>
 
     <script>
-        function fetchBooks() {
-            // Simulated JSON data
-            const books = [
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 1",
-                    "author": "Author 1",
-                    "stock": 10
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 2",
-                    "author": "Author 2",
-                    "stock": 0
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 3",
-                    "author": "Author 3",
-                    "stock": 5
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 4",
-                    "author": "Author 4",
-                    "stock": 2
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 5",
-                    "author": "Author 5",
-                    "stock": 8
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 6",
-                    "author": "Author 6",
-                    "stock": 8
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 7",
-                    "author": "Author 7",
-                    "stock": 8
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 8",
-                    "author": "Author 8",
-                    "stock": 8
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 9",
-                    "author": "Author 9",
-                    "stock": 8
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 10",
-                    "author": "Author 10",
-                    "stock": 8
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 11",
-                    "author": "Author 11",
-                    "stock": 8
-                },
-                {
-                    "image": "https://via.placeholder.com/100",
-                    "title": "Book 12",
-                    "author": "Author 12",
-                    "stock": 8
-                },
-            ];
+        const books = [
+            { "image": "https://via.placeholder.com/100", "title": "Book 1", "author": "Author 1", "stock": 10, "category": "Fiction" },
+            { "image": "https://via.placeholder.com/100", "title": "Book 2", "author": "Author 2", "stock": 0, "category": "Non-fiction" },
+            { "image": "https://via.placeholder.com/100", "title": "Book 3", "author": "Author 3", "stock": 5, "category": "Science" },
+            { "image": "https://via.placeholder.com/100", "title": "Book 4", "author": "Author 4", "stock": 2, "category": "History" },
+            { "image": "https://via.placeholder.com/100", "title": "Book 5", "author": "Author 5", "stock": 8, "category": "Biography" },
+            { "image": "https://via.placeholder.com/100", "title": "Book 6", "author": "Author 6", "stock": 3, "category": "Fantasy" },
+            { "image": "https://via.placeholder.com/100", "title": "Book 7", "author": "Author 7", "stock": 1, "category": "Mystery" },
+        ];
 
+        function displayBooks(bookList) {
             const booksGrid = document.getElementById("booksGrid");
-            booksGrid.innerHTML = ""; // Clear existing books
-
-            books.forEach(book => {
+            booksGrid.innerHTML = "";
+            bookList.forEach(book => {
                 const bookElement = document.createElement("div");
                 bookElement.className = "book";
                 bookElement.innerHTML = `
@@ -212,14 +163,47 @@
                     <h4>${book.title}</h4>
                     <p><strong>Author:</strong> ${book.author}</p>
                     <p><strong>Stock:</strong> ${book.stock > 0 ? "In Stock" : "Out of Stock"}</p>
-                    <button>Borrow</button>
+                    <button ${book.stock > 0 ? "" : "disabled"}>Borrow</button>
                 `;
+
+                const borrowButton = bookElement.querySelector("button");
+                borrowButton.addEventListener("click", () => {
+                    if (book.stock > 0) {
+                        alert(`You borrowed "${book.title}" by ${book.author}.`);
+                        book.stock--;
+                        displayBooks(books);
+                    } else {
+                        alert("Sorry, this book is out of stock.");
+                    }
+                });
+
                 booksGrid.appendChild(bookElement);
             });
         }
 
-        // Load books on page load
-        window.onload = fetchBooks;
+        function filterBooks(category) {
+            if (category) {
+                const filteredBooks = books.filter(book => book.category === category);
+                displayBooks(filteredBooks);
+            } else {
+                displayBooks(books);
+            }
+        }
+
+        document.querySelectorAll(".sidebar ul li a").forEach(link => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                const category = e.target.dataset.category;
+                filterBooks(category);
+            });
+        });
+
+        document.getElementById("backButton").addEventListener("click", () => {
+            window.location.href = "index.html"; // Update to your desired URL
+        });
+
+        // Load all books on page load
+        window.onload = () => displayBooks(books);
     </script>
 </body>
 </html>
