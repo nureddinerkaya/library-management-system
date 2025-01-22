@@ -32,6 +32,7 @@ class BookEntity(Base):
             "date": self.date.isoformat() if self.date else None,
             "isbn": self.isbn,
             "pages": self.pages,
+            "stock": self.stock,
             "image_data": base64.b64encode(image.data).decode('utf-8') if image else None,
             "image_mime_type": image.mime_type if image else None,
         }
