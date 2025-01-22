@@ -16,6 +16,18 @@
             color: white;
             padding: 1rem 0;
             text-align: center;
+            position: relative;
+        }
+        .account-info {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .account-info:hover {
+            text-decoration: underline;
         }
         .main-container {
             display: flex;
@@ -108,11 +120,47 @@
         .popup button:hover {
             background-color: #0056b3;
         }
+        .account-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            z-index: 1000;
+            width: 300px;
+        }
+        .account-popup input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .account-popup button {
+            width: 100%;
+            padding: 10px;
+            background-color: gray;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .account-popup button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Library Management System</h1>
+        <div class="account-info" id="accountInfo">
+            John Doe (123456)
+        </div>
     </header>
 
     <div class="main-container">
@@ -150,96 +198,128 @@
         <button id="editButton" style="display: none;">Edit</button>
     </div>
 
+    <div class="account-popup" id="accountPopup">
+        <h4>Change Password</h4>
+        <input type="password" id="newPassword" placeholder="Enter new password">
+        <input type="password" id="confirmPassword" placeholder="Confirm new password">
+        <button id="changePasswordButton">Change Password</button>
+        <button id="closeAccountPopup">Cancel</button>
+    </div>
+
     <script>
+        const accountInfo = document.getElementById("accountInfo");
+        const accountPopup = document.getElementById("accountPopup");
+        const popupOverlay = document.getElementById("popupOverlay");
+        const popup = document.getElementById("popup");
+        const closePopup = document.getElementById("closePopup");
+    
+        // Hesap bilgisi popup
+        accountInfo.addEventListener("click", () => {
+            accountPopup.style.display = "block";
+            popupOverlay.style.display = "block";
+        });
+    
+        document.getElementById("closeAccountPopup").addEventListener("click", () => {
+            accountPopup.style.display = "none";
+            popupOverlay.style.display = "none";
+        });
+    
+        popupOverlay.addEventListener("click", () => {
+            closeAllPopups();
+        });
+    
+        document.getElementById("changePasswordButton").addEventListener("click", () => {
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+    
+            if (!newPassword || !confirmPassword) {
+                alert("Please fill out both fields.");
+                return;
+            }
+    
+            if (newPassword !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+    
+            alert("Password changed successfully!");
+            closeAllPopups();
+        });
+    
         const books = [
-            { "image": "https://via.placeholder.com/100", "title": "Book 1", "author": "Author 1", "stock": 10, "category": "Fiction" },
+        { "image": "https://via.placeholder.com/100", "title": "Book 1", "author": "Author 1", "stock": 10, "category": "Fiction" },
             { "image": "https://via.placeholder.com/100", "title": "Book 2", "author": "Author 2", "stock": 0, "category": "Non-fiction" },
             { "image": "https://via.placeholder.com/100", "title": "Book 3", "author": "Author 3", "stock": 5, "category": "Science" },
             { "image": "https://via.placeholder.com/100", "title": "Book 4", "author": "Author 4", "stock": 2, "category": "History" },
             { "image": "https://via.placeholder.com/100", "title": "Book 5", "author": "Author 5", "stock": 8, "category": "Biography" },
             { "image": "https://via.placeholder.com/100", "title": "Book 6", "author": "Author 6", "stock": 3, "category": "Fantasy" },
             { "image": "https://via.placeholder.com/100", "title": "Book 7", "author": "Author 7", "stock": 1, "category": "Mystery" },
+
         ];
-
-        const isAdmin = true; // Change this to false for member users
-
-        function displayBooks(bookList) {
-            const booksGrid = document.getElementById("booksGrid");
+    
+        const booksGrid = document.getElementById("booksGrid");
+        const popupImage = document.getElementById("popupImage");
+        const popupTitle = document.getElementById("popupTitle");
+        const popupAuthor = document.getElementById("popupAuthor");
+        const popupStock = document.getElementById("popupStock");
+        const reserveButton = document.getElementById("reserveButton");
+    
+        function loadBooks(category = null) {
             booksGrid.innerHTML = "";
-            bookList.forEach(book => {
-                const bookElement = document.createElement("div");
-                bookElement.className = "book";
-                bookElement.innerHTML = `
-                    <img src="${book.image}" alt="${book.title} Cover">
+            const filteredBooks = category ? books.filter(book => book.category === category) : books;
+            filteredBooks.forEach(book => {
+                const bookDiv = document.createElement("div");
+                bookDiv.className = "book";
+                bookDiv.innerHTML = `
+                    <img src="${book.image}" alt="Book Cover">
                     <h4>${book.title}</h4>
                     <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>Stock:</strong> ${book.stock}</p>
                 `;
-                bookElement.addEventListener("click", () => openPopup(book));
-                booksGrid.appendChild(bookElement);
+                bookDiv.addEventListener("click", () => openPopup(book));
+                booksGrid.appendChild(bookDiv);
             });
         }
-
+    
         function openPopup(book) {
-            document.getElementById("popupImage").src = book.image;
-            document.getElementById("popupTitle").textContent = book.title;
-            document.getElementById("popupAuthor").textContent = book.author;
-            document.getElementById("popupStock").textContent = book.stock > 0 ? "In Stock" : "Out of Stock";
-            const reserveButton = document.getElementById("reserveButton");
+            popupImage.src = book.image;
+            popupTitle.textContent = book.title;
+            popupAuthor.textContent = book.author;
+            popupStock.textContent = book.stock;
             reserveButton.disabled = book.stock === 0;
-            reserveButton.onclick = () => {
-                if (book.stock > 0) {
-                    alert(`You reserved "${book.title}" by ${book.author}.`);
-                    book.stock--;
-                    displayBooks(books);
-                    closePopup();
-                } else {
-                    alert("Sorry, this book is out of stock.");
-                }
-            };
-
-            const editButton = document.getElementById("editButton");
-            if (isAdmin) {
-                editButton.style.display = "inline-block";
-                editButton.onclick = () => alert("Edit functionality to be implemented.");
-            } else {
-                editButton.style.display = "none";
-            }
-
-            document.getElementById("popupOverlay").style.display = "block";
-            document.getElementById("popup").style.display = "block";
+            popup.style.display = "block";
+            popupOverlay.style.display = "block";
         }
-
-        function closePopup() {
-            document.getElementById("popupOverlay").style.display = "none";
-            document.getElementById("popup").style.display = "none";
-        }
-
-        document.getElementById("popupOverlay").addEventListener("click", closePopup);
-        document.getElementById("closePopup").addEventListener("click", closePopup);
-
-        function filterBooks(category) {
-            if (category) {
-                const filteredBooks = books.filter(book => book.category === category);
-                displayBooks(filteredBooks);
-            } else {
-                displayBooks(books);
-            }
-        }
-
-        document.querySelectorAll(".sidebar ul li a").forEach(link => {
-            link.addEventListener("click", (e) => {
-                e.preventDefault();
-                const category = e.target.dataset.category;
-                filterBooks(category);
-            });
+    
+        closePopup.addEventListener("click", () => {
+            closeAllPopups();
         });
-
+    
+        reserveButton.addEventListener("click", () => {
+            alert("Book reserved successfully!");
+            closeAllPopups();
+        });
+    
+        function closeAllPopups() {
+            popup.style.display = "none";
+            accountPopup.style.display = "none";
+            popupOverlay.style.display = "none";
+        }
         document.getElementById("backButton").addEventListener("click", () => {
             window.location.href = "home.html"; // Update to your desired URL
         });
 
-        // Load all books on page load
-        window.onload = () => displayBooks(books);
+        document.querySelectorAll(".sidebar ul li a").forEach(link => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                const category = link.getAttribute("data-category");
+                loadBooks(category);
+            });
+        });
+    
+        // İlk yükleme
+        loadBooks();
     </script>
+    
 </body>
 </html>
