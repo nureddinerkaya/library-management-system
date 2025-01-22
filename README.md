@@ -18,4 +18,8 @@ Frontend şöyle kurulacak:
 ```
 cd frontend
 npm install
+
+//çalıştırmak için (terminalin directory'si frontend olcak)
+
+npm run dev
 ```
