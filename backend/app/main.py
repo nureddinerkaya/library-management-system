@@ -2,6 +2,7 @@ from sanic import Sanic, text
 from backend.database import Base, engine
 import user.UserBlueprint
 import copies.CopiesBlueprint
+import auth.AuthBlueprint
 
 # Sanic Uygulamanızı başlatıyorsunuz
 app = Sanic("LibraryManagementApp")
@@ -9,6 +10,7 @@ app = Sanic("LibraryManagementApp")
 # Blueprintlerinizi uygulamaya ekliyorsunuz
 app.blueprint(user.UserBlueprint.bp)
 app.blueprint(copies.CopiesBlueprint.copies_blueprint)
+app.blueprint(auth.AuthBlueprint.bp)
 
 # Uygulama başlatılmadan önce veritabanı tablolarını oluşturun
 @app.listener("before_server_start")

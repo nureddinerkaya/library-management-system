@@ -9,7 +9,7 @@ from backend.database import SessionLocal
 class AuthService:
 
     @staticmethod
-    async def authenticate_user(request):
+    async def login(request):
         """Kullanıcıyı doğrulamak ve oturum açmak."""
         with SessionLocal() as session:
             try:
@@ -17,7 +17,7 @@ class AuthService:
                 username = data["username"]
                 password = data["password"]
 
-                user = session.query(UserEntity).filter_by(username=username).first()
+                user = session.query(UserEntity).filter(UserEntity.username == username).first()
 
                 if not user:
                     return json({"status": "error", "message": "User not found"}, status=404)
@@ -25,11 +25,11 @@ class AuthService:
                 if user.password != password:
                     return json({"status": "error", "message": "Invalid password"}, status=401)
 
-                # Token oluştur
+                type = user.type
                 token = AuthService.generate_token(user.id)
 
                 # Yeni AuthEntity kaydı
-                new_session = AuthEntity(user_id=user.id, token=token)
+                new_session = AuthEntity(user_id=user.id, token=token, type=type)
                 session.add(new_session)
                 session.commit()
 
