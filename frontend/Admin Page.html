@@ -225,6 +225,7 @@
             </div>
         </div>
         
+        
 
         <div id="borrowings" class="tab-content">
             <h2>Manage Borrowings</h2>
@@ -241,7 +242,18 @@
                 <button type="submit">Add Borrowing</button>
             </form>
             <br>
-        
+            <div>
+                <h3>Filter Borrowings by Status</h3>
+                <label for="statusFilter">Select Status:</label>
+                <select id="statusFilter" onchange="filterBorrowingsByStatus()">
+                    <option value="all">All</option>
+                    <option value="pending">Borrowed</option>
+                    <option value="returned">Returned</option>
+                    <option value="overdue">Active</option>
+                    <option value="overdue">Pending</option>
+                </select>
+            </div>
+            
             <h3>Borrowings List</h3>
             <table border="1" width="100%">
                 <thead>
@@ -411,8 +423,82 @@ function updateStatus(index, newStatus) {
     borrowings[index].status = newStatus;
     displayBorrowings();
 }
+function filterBorrowingsByStatus() {
+    const selectedStatus = document.getElementById("statusFilter").value;
+    const borrowingsTableBody = document.getElementById("borrowingsTableBody");
+    borrowingsTableBody.innerHTML = ""; // Clear the existing table rows
+
+    borrowings
+        .filter(borrowing => selectedStatus === "all" || borrowing.status === selectedStatus)
+        .forEach((borrowing, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${borrowing.borrowingID}</td>
+                <td>${borrowing.memberID}</td>
+                <td>${borrowing.bookID}</td>
+                <td>${borrowing.status}</td>
+                <td>
+                    ${borrowing.status === "pending" ? `<button onclick="updateStatus(${index}, 'active')">Approve</button>` : ""}
+                    ${borrowing.status === "active" ? `<button onclick="updateStatus(${index}, 'returned')">Return</button>` : ""}
+                    ${borrowing.status === "active" ? `<button onclick="updateStatus(${index}, 'overdue')">Mark Overdue</button>` : ""}
+                </td>
+            `;
+            borrowingsTableBody.appendChild(row);
+        });
+
+    // Show a message if no results are found
+    if (borrowingsTableBody.innerHTML === "") {
+        const noResultsRow = document.createElement("tr");
+        noResultsRow.innerHTML = `<td colspan="5" style="text-align: center;">No borrowings found for the selected status.</td>`;
+        borrowingsTableBody.appendChild(noResultsRow);
+    }
+}
+function displayBorrowings() {
+    const borrowingsTableBody = document.getElementById("borrowingsTableBody");
+    borrowingsTableBody.innerHTML = ""; // Clear existing rows
+
+    borrowings.forEach((borrowing, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${borrowing.borrowingID}</td>
+            <td>${borrowing.memberID}</td>
+            <td>${borrowing.bookID}</td>
+            <td>${borrowing.status}</td>
+            <td>
+                <button onclick="deleteBorrowing(${index})">Delete</button>
+                <button onclick="updateStatus(${index}, 'active')">Active</button>
+                <button onclick="updateStatus(${index}, 'returned')">Returned</button>
+                <button onclick="editBorrowing(${index})">Edit</button>
+            </td>
+        `;
+        borrowingsTableBody.appendChild(row);
+    });
+
+    // Show a message if no results are found
+    if (borrowingsTableBody.innerHTML === "") {
+        const noResultsRow = document.createElement("tr");
+        noResultsRow.innerHTML = `<td colspan="5" style="text-align: center;">No borrowings found.</td>`;
+        borrowingsTableBody.appendChild(noResultsRow);
+    }
+}
+function deleteBorrowing(index) {
+    const confirmation = confirm("Are you sure you want to delete this borrowing?");
+    if (confirmation) {
+        borrowings.splice(index, 1); // Remove the borrowing from the array
+        displayBorrowings(); // Refresh the table
+        alert("Borrowing successfully deleted.");
+    }
+}
+
+function updateStatus(index, newStatus) {
+    borrowings[index].status = newStatus; // Update the status
+    displayBorrowings(); // Refresh the table
+}
+
+function editBorrowing(index) {
+    alert(`Editing borrowing with ID: ${borrowings[index].borrowingID}. Implement edit logic here.`);
+}
 
     </script>
 </body>
 </html>
-
