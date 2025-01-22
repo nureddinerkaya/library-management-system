@@ -80,8 +80,10 @@ class BorrowingService:
             try:
                 #expected tarihi şimdiki tarihten geri olan ve state'i returned olmayan satırları bulup liste dönecek query
                 #Bu listeyi dönüp her bir öğenin state'ini overdue yapacak for döngüsü
-                #bunları chatGPT'ye yaptır.
-                #kolay gelsin
+                results = session.query(BorrowingEntity).filter(BorrowingEntity.expected < datetime.now(),BorrowingEntity.state != "returned").all()
+                for record in results:
+                    record.state = "overdue"
+                session.commit()
             except Exception as e:
                 return json({"status": "error", "message": str(e)})
 
@@ -160,7 +162,7 @@ class BorrowingService:
     async def add_borrowing(request):
         with SessionLocal() as session:
             try:
-                data = request.json #bu fonksiyon json payload'ını alıp python dict'ine dönüştürüyormuş
+                data = request.json
                 copy_id = data.get("copy")
                 existing_borrowing = session.query(BorrowingEntity).filter_by(copy=copy_id).first()
                 if existing_borrowing:

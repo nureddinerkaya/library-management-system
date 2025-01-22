@@ -39,6 +39,6 @@ class BorrowingEntity(Base):
             borrow_date=data.get("borrow_date"),
             expected_date=data.get("expected_date"),
             return_date=data.get("return_date"),
-            state=data.get("state")
+            state="pending"
 
         )
