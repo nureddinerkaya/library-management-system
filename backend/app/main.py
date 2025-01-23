@@ -50,9 +50,9 @@ async def get_book(request, book_id):
     # Cache'te yoksa, veritabanına sorgu yaparak kitabı al
     conn = psycopg2.connect(
         host="localhost",
-        database="your_database_name",  # Veritabanı adı
-        user="your_username",  # Kullanıcı adı
-        password="your_password"  # Parola
+        database="PostgreSQL",
+        user="postgres",
+        password="postgres"
     )
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM books WHERE id = %s", (book_id,))
