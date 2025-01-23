@@ -1,14 +1,20 @@
+# Base image olarak python 3.10 seçiyoruz
 FROM python:3.11
 
+# Çalışma dizinini /app olarak ayarlıyoruz
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    libpq-dev gcc && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
+# Gereksinim dosyasını kopyala
 COPY requirements.txt /app/
+
+# Gereksinimleri yükle
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY backend /app/
+# backend dizinini kopyala
+COPY backend /app/backend
 
-CMD ["python", "main.py"]
+# PYTHONPATH ortam değişkenini /app olarak ayarlıyoruz
+ENV PYTHONPATH=/app
+
+# main.py dosyasını çalıştır
+CMD ["python", "/app/backend/app/main.py"]
