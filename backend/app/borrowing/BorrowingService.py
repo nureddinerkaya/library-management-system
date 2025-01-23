@@ -154,8 +154,80 @@ class BorrowingService:
             except Exception as e:
                 return json({"status": "error", "message": str(e)})
 
+    @staticmethod
+    async def get_borrowing_by_username(request):
 
 
+        username1 = request.args.get("username")
+        if not username1:  # Eğer username yoksa uyarı ver
+            return json({"error": "Username parameter is required."})
+
+        with SessionLocal() as session:
+            try:
+                # 1. Adım: Kullanıcıyı bul
+                user = session.query(UserEntity).filter(
+                UserEntity.username.ilike(f"%{username1}%")).first()
+
+                if not user:  # Eğer kullanıcı yoksa hata döndür
+                    return json({"error": f"No user found with the username '{username1}'."})
+
+                # 2. Adım: Kullanıcının borrowing (ödünç alma) kaydını bul
+                borrowing = session.query(BorrowingEntity).filter(
+                    BorrowingEntity.member == user.id
+                ).first()
+
+                if not borrowing:  # Eğer borrowing kaydı yoksa hata döndür
+                    return json({"error": f"No borrowing record found for user '{username1}'."})
+
+                # 3. Adım: Borrowing kaydını JSON formatında dön
+                return json({
+                    "user": {
+                        "id": user.id,
+                        "username": user.username
+                    },
+                    "borrowing": borrowing.to_dict()  # Borrowing kaydını JSON formatına dönüştür
+                })
+            except Exception as e:
+                return json({"error": f"An error occurred: {str(e)}"})
+            finally:
+                session.close()
+
+    @staticmethod
+    async def get_borrowing_by_name(request):
+
+        name1 = request.args.get("name")
+        if not name1:  # Eğer username yoksa uyarı ver
+            return json({"error": "Username parameter is required."})
+
+        with SessionLocal() as session:
+            try:
+                # 1. Adım: Kullanıcıyı bul
+                user = session.query(UserEntity).filter(
+                    UserEntity.name.ilike(f"%{name1}%")).first()
+
+                if not user:  # Eğer kullanıcı yoksa hata döndür
+                    return json({"error": f"No user found with the name '{name1}'."})
+
+                # 2. Adım: Kullanıcının borrowing (ödünç alma) kaydını bul
+                borrowing = session.query(BorrowingEntity).filter(
+                    BorrowingEntity.member == user.id
+                ).first()
+
+                if not borrowing:  # Eğer borrowing kaydı yoksa hata döndür
+                    return json({"error": f"No borrowing record found for user '{name1}'."})
+
+                # 3. Adım: Borrowing kaydını JSON formatında dön
+                return json({
+                    "user": {
+                        "id": user.id,
+                        "username": user.username
+                    },
+                    "borrowing": borrowing.to_dict()  # Borrowing kaydını JSON formatına dönüştür
+                })
+            except Exception as e:
+                return json({"error": f"An error occurred: {str(e)}"})
+            finally:
+                session.close()
 
 
     @staticmethod

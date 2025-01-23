@@ -9,6 +9,16 @@ copies_blueprint = Blueprint("copies", url_prefix="/copies")
 async def create_copy(request):
     return  await CopiesServices.add_copy(request)
 
+
+@copies_blueprint.route("/Getbybooktitle",methods=["GET"])
+async def get_copy_by_book_title(request):
+    """Handles retrieving a specific copy."""
+    return await CopiesServices.view_copies_by_book_title(request)
+
+
+
+
+
 @copies_blueprint.route("/Getbycopyid",methods=["GET"])
 async def get_copy(request):
     """Handles retrieving a specific copy."""

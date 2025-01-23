@@ -37,6 +37,50 @@ class UserService:
                 return json({"status": "error", "message": str(e)})
 
 
+
+    @staticmethod
+    async def get_users_by_user_name(request):
+        with SessionLocal() as session:
+            user_name = str(request.args.get("username"))
+            try:
+                # '%title%' ile başlığın herhangi bir kısmında title geçen sonuçlar sorgulanır
+                records = session.query(UserEntity).filter(
+                    UserEntity.username.ilike(f"%{user_name}%")
+                ).all()
+
+
+                # Eğer sonuç yoksa boş bir liste döndürülür
+                if not records:
+                    return json({"message": "No users found with the given username."})
+
+                results = [ records.to_dict() for records in records]
+                return json(results)
+            except Exception as e:
+                # Hata olursa kullanıcıya hata mesajı döndür
+                return {"error": f"An error occurred: {str(e)}"}
+
+    @staticmethod
+    async def get_users_by_name(request):
+        with SessionLocal() as session:
+            name1 = str(request.args.get("name"))
+
+            try:
+                # '%title%' ile başlığın herhangi bir kısmında title geçen sonuçlar sorgulanır
+                records = session.query(UserEntity).filter(
+                    UserEntity.name.ilike(f"%{name1}%")
+                ).all()
+
+                # Eğer sonuç yoksa boş bir liste döndürülür
+                if not records:
+                    return json({"message": "No user found with the given name."})
+
+                results = [records.to_dict() for records in records]
+                return json(results)
+            except Exception as e:
+                # Hata olursa kullanıcıya hata mesajı döndür
+                return {"error": f"An error occurred: {str(e)}"}
+
+
     @staticmethod
     async def add_user(request):
         with SessionLocal() as session:
