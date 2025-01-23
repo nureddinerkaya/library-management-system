@@ -1,9 +1,13 @@
 from sanic import Sanic, text
+from sqlalchemy.dialects.postgresql import psycopg2
 from backend.database import Base, engine
 import book.BookBlueprint
 import user.UserBlueprint
 import image.ImageBlueprint
 import auth.AuthBlueprint
+import redis
+
+
 import  copies.CopiesBlueprint
 import borrowing.BorrowingBlueprint
 # ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ
@@ -14,6 +18,7 @@ import borrowing.BorrowingBlueprint
 # Entity'yi iki kere gördüğünden hata veriyor.
 
 #from book.BookEntity import BookEntity
+r = redis.Redis(host='localhost', port=6380, db=0)
 
 app = Sanic("LibraryManagementApp")
 
@@ -34,6 +39,36 @@ async def setup_db(app, loop):
 async def hello(request):
     print ("hello")
     return text("Hello, World!")
+
+
+@app.get("/get_book/<book_id>")
+async def get_book(request, book_id):
+    cached_book = r.get(f"book:{book_id}")
+
+    if cached_book:
+        print("Cache'ten alınan kitap:")
+        return text(f"Cache'ten alınan kitap: {cached_book.decode('utf-8')}")
+
+    # Cache'te yoksa, veritabanına sorgu yaparak kitabı al
+    conn = psycopg2.connect(
+        host="localhost",
+        database="PostgreSQL",
+        user="postgres",
+        password="postgres"
+    )
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM books WHERE id = %s", (book_id,))
+    book = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if book:
+        # Veritabanından alınan veriyi cache'e ekle
+        r.set(f"book:{book_id}", str(book))
+        print("Veritabanından alınan kitap:", book)
+        return text(f"Veritabanından alınan kitap: {book}")
+
+    return text("Kitap bulunamadı!")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
