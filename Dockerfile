@@ -1,20 +1,26 @@
-# Base image olarak python 3.10 seçiyoruz
-FROM python:3.11
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
 
-# Çalışma dizinini /app olarak ayarlıyoruz
+# Set the working directory to /app
 WORKDIR /app
 
-# Gereksinim dosyasını kopyala
+# Copy the requirements.txt file into the container at /app
 COPY requirements.txt /app/
 
-# Gereksinimleri yükle
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# backend dizinini kopyala
-COPY backend /app/backend
+# Copy the current directory contents into the container at /app
+COPY . /app/
 
-# PYTHONPATH ortam değişkenini /app olarak ayarlıyoruz
-ENV PYTHONPATH=/app
+# Set PYTHONPATH to include the backend directory
+ENV PYTHONPATH="${PYTHONPATH}:/app/backend"
 
-# main.py dosyasını çalıştır
+# Expose port 8000
+EXPOSE 8000
+
+# Define environment variable to run the app
+ENV PYTHONUNBUFFERED=1
+
+# Command to run the application
 CMD ["python", "/app/backend/app/main.py"]

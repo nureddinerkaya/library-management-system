@@ -5,7 +5,7 @@ import psycopg2
 def get_db_connection():
     conn = psycopg2.connect(
         host="localhost",
-        database="postgreSQL",  # Veritabanı adını buraya yazın
+        database="postgres",  # Veritabanı adını buraya yazın
         user="postgres",           # PostgreSQL kullanıcı adınızı buraya yazın
         password="postgres"        # PostgreSQL şifrenizi buraya yazın
     )
