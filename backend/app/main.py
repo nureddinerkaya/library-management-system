@@ -4,11 +4,12 @@ from backend.database import Base, engine
 import book.BookBlueprint
 import user.UserBlueprint
 import image.ImageBlueprint
-import copies.CopiesBlueprint
 import auth.AuthBlueprint
 import redis
 
 
+import  copies.CopiesBlueprint
+import borrowing.BorrowingBlueprint
 # ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ ÖNEMLİ
 # Eğer oluşturulacak tablonun Blueprint'i import edilmemişse
 # Entity dosyasının import edilmesi gerek, yoksa tablo oluşmaz.
@@ -27,6 +28,7 @@ app.blueprint(user.UserBlueprint.bp)
 app.blueprint(copies.CopiesBlueprint.copies_blueprint )
 app.blueprint(image.ImageBlueprint.bp)
 app.blueprint(auth.AuthBlueprint.bp)
+app.blueprint(borrowing.BorrowingBlueprint.borrowing_blueprint)
 
 @app.listener("before_server_start")
 async def setup_db(app, loop):

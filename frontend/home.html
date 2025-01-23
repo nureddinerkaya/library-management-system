@@ -86,6 +86,18 @@
             font-size: 1rem;
             margin: 10px 0;
         }
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .search-bar input {
+            width: 75%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
         .popup {
             display: none;
             position: fixed;
@@ -180,9 +192,13 @@
         <div class="container">
             <button class="back-button" id="backButton">Go Back</button>
             
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search for books by title...">
+            </div>
+
             <h2>Available Books</h2>
             <div class="books-grid" id="booksGrid">
-                <!-- Books will be dynamically loaded here -->
+             <!-- Books will be dynamically loaded here -->
             </div>
         </div>
     </div>
@@ -203,70 +219,47 @@
         <input type="password" id="newPassword" placeholder="Enter new password">
         <input type="password" id="confirmPassword" placeholder="Confirm new password">
         <button id="changePasswordButton">Change Password</button>
+        <br><br>
         <button id="closeAccountPopup">Cancel</button>
     </div>
 
     <script>
-        const accountInfo = document.getElementById("accountInfo");
-        const accountPopup = document.getElementById("accountPopup");
-        const popupOverlay = document.getElementById("popupOverlay");
-        const popup = document.getElementById("popup");
-        const closePopup = document.getElementById("closePopup");
-    
-        // Hesap bilgisi popup
-        accountInfo.addEventListener("click", () => {
-            accountPopup.style.display = "block";
-            popupOverlay.style.display = "block";
-        });
-    
-        document.getElementById("closeAccountPopup").addEventListener("click", () => {
-            accountPopup.style.display = "none";
-            popupOverlay.style.display = "none";
-        });
-    
-        popupOverlay.addEventListener("click", () => {
-            closeAllPopups();
-        });
-    
-        document.getElementById("changePasswordButton").addEventListener("click", () => {
-            const newPassword = document.getElementById("newPassword").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
-    
-            if (!newPassword || !confirmPassword) {
-                alert("Please fill out both fields.");
-                return;
-            }
-    
-            if (newPassword !== confirmPassword) {
-                alert("Passwords do not match.");
-                return;
-            }
-    
-            alert("Password changed successfully!");
-            closeAllPopups();
-        });
-    
         const books = [
-        { "image": "https://via.placeholder.com/100", "title": "Book 1", "author": "Author 1", "stock": 10, "category": "Fiction" },
+            { "image": "https://via.placeholder.com/100", "title": "Book 1", "author": "Author 1", "stock": 10, "category": "Fiction" },
             { "image": "https://via.placeholder.com/100", "title": "Book 2", "author": "Author 2", "stock": 0, "category": "Non-fiction" },
             { "image": "https://via.placeholder.com/100", "title": "Book 3", "author": "Author 3", "stock": 5, "category": "Science" },
             { "image": "https://via.placeholder.com/100", "title": "Book 4", "author": "Author 4", "stock": 2, "category": "History" },
             { "image": "https://via.placeholder.com/100", "title": "Book 5", "author": "Author 5", "stock": 8, "category": "Biography" },
             { "image": "https://via.placeholder.com/100", "title": "Book 6", "author": "Author 6", "stock": 3, "category": "Fantasy" },
             { "image": "https://via.placeholder.com/100", "title": "Book 7", "author": "Author 7", "stock": 1, "category": "Mystery" },
-
         ];
-    
+
         const booksGrid = document.getElementById("booksGrid");
+        const searchInput = document.getElementById("searchInput");
         const popupImage = document.getElementById("popupImage");
         const popupTitle = document.getElementById("popupTitle");
         const popupAuthor = document.getElementById("popupAuthor");
         const popupStock = document.getElementById("popupStock");
         const reserveButton = document.getElementById("reserveButton");
-    
-        function loadBooks(category = null) {
+        const accountInfo = document.getElementById("accountInfo");
+        const accountPopup = document.getElementById("accountPopup");
+        const popupOverlay = document.getElementById("popupOverlay");
+        const popup = document.getElementById("popup");
+        const closePopup = document.getElementById("closePopup");
+
+        function loadBooks(category = null, searchTerm = "") {
             booksGrid.innerHTML = "";
-            const filteredBooks = category ? books.filter(book => book.category === category) : books;
+            const filteredBooks = books.filter(book => {
+                const matchesCategory = category ? book.category === category : true;
+                const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filteredBooks.length === 0) {
+                booksGrid.innerHTML = `<p>No books found.</p>`;
+                return;
+            }
+
             filteredBooks.forEach(book => {
                 const bookDiv = document.createElement("div");
                 bookDiv.className = "book";
@@ -280,7 +273,7 @@
                 booksGrid.appendChild(bookDiv);
             });
         }
-    
+
         function openPopup(book) {
             popupImage.src = book.image;
             popupTitle.textContent = book.title;
@@ -290,21 +283,62 @@
             popup.style.display = "block";
             popupOverlay.style.display = "block";
         }
-    
+
         closePopup.addEventListener("click", () => {
             closeAllPopups();
         });
-    
+
         reserveButton.addEventListener("click", () => {
-            alert("Book reserved successfully!");
+            if (popupStock.textContent === "0") {
+                alert("Invalid operation: Book is out of stock.");
+            } else {
+                alert("Book reserved successfully!");
+            }
             closeAllPopups();
         });
-    
+
         function closeAllPopups() {
             popup.style.display = "none";
             accountPopup.style.display = "none";
             popupOverlay.style.display = "none";
         }
+
+        searchInput.addEventListener("input", () => {
+            loadBooks(null, searchInput.value);
+        });
+
+        accountInfo.addEventListener("click", () => {
+            accountPopup.style.display = "block";
+            popupOverlay.style.display = "block";
+        });
+
+        document.getElementById("closeAccountPopup").addEventListener("click", () => {
+            accountPopup.style.display = "none";
+            popupOverlay.style.display = "none";
+        });
+
+        popupOverlay.addEventListener("click", () => {
+            closeAllPopups();
+        });
+
+        document.getElementById("changePasswordButton").addEventListener("click", () => {
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (!newPassword || !confirmPassword) {
+                alert("Please fill out both fields.");
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+
+            alert("Password changed successfully!");
+            closeAllPopups();
+        });
+
         document.getElementById("backButton").addEventListener("click", () => {
             window.location.href = "home.html"; // Update to your desired URL
         });
@@ -316,10 +350,9 @@
                 loadBooks(category);
             });
         });
-    
+
         // İlk yükleme
         loadBooks();
     </script>
-    
 </body>
 </html>

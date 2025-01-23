@@ -18,6 +18,19 @@ async def get_user_by_id(request):
     # Example: GET /getById?id=123
     return await UserService.get_user_by_id(request)
 
+@bp.route("/getByusername", methods=["GET"])
+async def get_user_by_users_name(request):
+    # Example: GET /getById?id=123
+    return await UserService.get_users_by_user_name(request)
+
+
+@bp.route("/getByname", methods=["GET"])
+async def get_user_by_name(request):
+    # Example: GET /getById?id=123
+    return await UserService.get_users_by_name(request)
+
+
+
 
 @bp.route("/add", methods=["POST"])
 async def add_user(request):

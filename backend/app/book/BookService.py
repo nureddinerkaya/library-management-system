@@ -32,6 +32,26 @@ class BookService:
             except Exception as e:
                 return json({"status": "error", "message": str(e)})
 
+    @staticmethod
+    async def get_book_by_title(request):
+        with SessionLocal() as session:
+
+            book_title = str(request.args.get("title"))
+            try:
+                # '%title%' ile başlığın herhangi bir kısmında title geçen sonuçlar sorgulanır
+                books = session.query(BookEntity).filter(
+                    BookEntity.title.ilike(f"%{book_title}%")
+                ).all()
+
+                # Eğer sonuç yoksa boş bir liste döndürülür
+                if not books:
+                    return {"message": "No books found with the given title."}
+
+                results = [await books.to_dict() for books in books]
+                return json(results)
+            except Exception as e:
+                # Hata olursa kullanıcıya hata mesajı döndür
+                return {"error": f"An error occurred: {str(e)}"}
 
     @staticmethod
     async def add_book(request):

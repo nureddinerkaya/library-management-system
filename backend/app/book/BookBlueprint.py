@@ -19,6 +19,12 @@ async def get_book(request):
     # Example: GET /getById?id=123
     return await BookService.get_book_by_id(request)
 
+@bp.route("/getByTitle", methods=["GET"])
+async def get_book_by_titles(request):
+    # Example: GET /getByTitle?id=123
+    return await BookService.get_book_by_title(request)
+
+
 
 @bp.route("/add", methods=["POST"])
 async def add_book(request):

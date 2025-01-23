@@ -9,6 +9,16 @@ copies_blueprint = Blueprint("copies", url_prefix="/copies")
 async def create_copy(request):
     return  await CopiesServices.add_copy(request)
 
+
+@copies_blueprint.route("/Getbybooktitle",methods=["GET"])
+async def get_copy_by_book_title(request):
+    """Handles retrieving a specific copy."""
+    return await CopiesServices.view_copies_by_book_title(request)
+
+
+
+
+
 @copies_blueprint.route("/Getbycopyid",methods=["GET"])
 async def get_copy(request):
     """Handles retrieving a specific copy."""
@@ -21,21 +31,21 @@ async def list_all_copies(request):
 
 @copies_blueprint.route("/getbyprintno",methods=["GET"])
 async def list_copies_byprintno(request):
-    """Handles listing all copies."""
+
     return await CopiesServices.view_copies_by_print_no(request)
 
 
 
 @copies_blueprint.route("/getbylocation",methods=["GET"])
 async def list_copies_bylocation(request):
-    """Handles listing all copies."""
+
     return await CopiesServices.view_copies_by_location(request)
 
 
 
 @copies_blueprint.route("/getbyavailability",methods=["GET"])
 async def list_copies_byavailability(request):
-    """Handles listing all copies."""
+    #/getbyavailability?availability=Yes
     return await CopiesServices.view_copies_by_availability(request)
 
 

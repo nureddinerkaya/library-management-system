@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from sanic import json, text
 
 from backend.app.book.BookService import BookService
+from backend.app.book.BookEntity import BookEntity
+from backend.app.borrowing.BorrowingBlueprint import get_book_by_title
 from backend.app.copies.Copies import Copies
 from backend.database import SessionLocal
 from datetime import datetime
@@ -44,6 +46,52 @@ class CopiesServices:
            copies = [book.to_dict() for book in results]
            return json(copies)
 
+    @staticmethod
+    async def view_copies_by_book_title(request):
+        book_title = request.args.get("title")
+
+
+        with SessionLocal() as session:
+            try:
+                # Kitabı sorgula
+                book = session.query(BookEntity).filter(
+                    BookEntity.title.ilike(f"%{book_title}%")
+                ).first()
+
+
+                if not book:  # Kitap bulunamazsa hata döndür
+                    return json({"error": f"No copy found with the title '{book_title}'."})
+
+                # Kitap ID'si üzerinden Copy'leri sorgula
+                copies = session.query(Copies).filter(
+                    Copies.book == book.id
+                ).all()
+
+                if not copies:  # Copy yoksa hata döndür
+                    return json({"error": f"No copies found for the book titled '{book_title}'."})
+
+                # Copy'leri liste halinde döndür
+                results = [copy.to_dict() for copy in copies]
+                return json({"book_title": book.title, "copies": results})
+
+            except Exception as e:
+                return json({"error": f"An error occurred: {str(e)}"})
+            finally:
+                session.close()
+
+
+    @staticmethod
+    def get_book_id_by_title(title):
+        with SessionLocal() as session:  # Veritabanı oturumunu başlat
+            # Kitap başlığına göre kitabı sorgula
+            book = session.query(BookEntity).filter(
+                BookEntity.title.ilike(f"%{title}%")  # Büyük/küçük harf duyarsız arama
+            ).first()
+
+            if book:  # Eğer kitap bulunduysa ID'sini döndür
+                return book.id
+            else:  # Eğer kitap bulunamazsa None döndür
+                return None
 
     @staticmethod
     async def view_copies_by_id(request):
