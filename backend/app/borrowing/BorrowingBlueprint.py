@@ -50,6 +50,18 @@ async def get_borrowings_by_id(request):
 async def get_borrowings_by_member(request):
 #    # Example: GET /getByMember?member=1
     return await BorrowingService.get_borrowing_by_member(request)
+
+@borrowing_blueprint.route("/getByUserName", methods=["GET"])
+async def get_borrowings_by_user_name(request):
+#    # Example: GET /getByMember?member=1
+    return await BorrowingService.get_borrowing_by_username(request)
+
+@borrowing_blueprint.route("/getByName", methods=["GET"])
+async def get_borrowings_by_name(request):
+#    # Example: GET /getByMember?member=1
+    return await BorrowingService.get_borrowing_by_name(request)
+
+
 #
 #
 @borrowing_blueprint.route("/getByBorrowDate", methods=["GET"])
