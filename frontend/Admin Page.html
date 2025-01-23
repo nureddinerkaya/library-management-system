@@ -144,7 +144,6 @@
             <table id="booksTable">
                 <thead>
                     <tr>
-                        <th>İmage</th>
                         <th>Title</th>
                         <th>Author</th>
                         <th>Stock</th>
@@ -272,7 +271,137 @@
         </div>
         
     </div>
-
+    <div id="books" class="tab-content">
+        <h2>Manage Books</h2>
+        <input type="text" id="searchBookInput" placeholder="Search by title..." oninput="searchBooks()">
+        <form id="addBookForm">
+            <label for="bookTitle">Book Title</label>
+            <input type="text" id="bookTitle" placeholder="Enter book title">
+            <label for="bookAuthor">Author</label>
+            <input type="text" id="bookAuthor" placeholder="Enter author name">
+            <label for="bookStock">Stock</label>
+            <input type="number" id="bookStock" placeholder="Enter stock amount">
+            <button type="button" onclick="addBook()">Add Book</button>
+        </form>
+        <table id="booksTable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Book rows go here -->
+            </tbody>
+        </table>
+    </div>
+    <div id="members" class="tab-content">
+        <h2>Manage Members</h2>
+        <form id="membersForm">
+            <label for="MemberName">Member Name:</label>
+            <input type="text" id="MemberName" placeholder="Enter User Name">
+            <br><br>
+            <label for="MemberLastName">Member Last Name:</label>
+            <input type="text" id="MemberLastName" placeholder="Enter User Last Name">
+            <br><br>
+            <label for="MemberID">Member ID:</label>
+            <input type="text" id="MemberID" placeholder="Enter User ID">
+            <br><br>
+            <label for="MemberDepartment">Member Department:</label>
+            <input type="text" id="MemberDepartment" placeholder="Enter User Department">
+            <br><br>
+            <button type="submit">Add Member</button>
+            <button type="button" id="cancelEdit" style="display:none;">Cancel Edit</button>
+        </form>
+        
+        <div>
+            <h3>Search Members</h3>
+            <label for="searchCriteria">Search By:</label>
+            <select id="searchCriteria">
+                <option value="name">Name</option>
+                <option value="lastName">Last Name</option>
+                <option value="id">ID</option>
+                <option value="department">Department</option>
+            </select>
+            <input type="text" id="searchBox" placeholder="Enter search term">
+        </div>
+        
+        <div id="membersList">
+            <h3>Members List</h3>
+            <table border="1" width="100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Last Name</th>
+                        <th>ID</th>
+                        <th>Department</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="membersTableBody">
+                    <!-- Member rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="copies" class="tab-content">
+        <h2>Manage Copies</h2>
+        <form id="copiesForm">
+            <label for="CopyID">Copy ID:</label>
+            <input type="text" id="CopyID" placeholder="Enter Copy ID">
+            <br><br>
+            <label for="CopyName">Copy Name:</label>
+            <input type="text" id="CopyName" placeholder="Enter Copy Name">
+            <br><br>
+            <label for="CopyAuthor">Copy Author:</label>
+            <input type="text" id="CopyAuthor" placeholder="Enter Copy Author">
+            <br><br>
+            <label for="CopyStatus">Copy Status:</label>
+            <input type="text" id="CopyStatus" placeholder="Enter Copy Status">
+            <br><br>
+            <button type="submit">Add Copy</button>
+        </form>
+    
+        <div>
+            <h3>Search Copies</h3>
+            <label for="searchCopyCriteria">Search By:</label>
+            <select id="searchCopyCriteria">
+                <option value="name">Name</option>
+                <option value="id">ID</option>
+                <option value="author">Author</option>
+                <option value="status">Status</option>
+            </select>
+            <input type="text" id="searchCopyBox" placeholder="Enter search term">
+        </div>
+    
+        <div id="copiesList">
+            <h3>Copies List</h3>
+            <table border="1" width="100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="copiesTableBody">
+                    <!-- Copy rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    
+        <!-- Edit Copies Section -->
+        <div id="editCopies">
+            <h3>Edit Copies</h3>
+            <ul id="copiesToDelete">
+                <!-- Copies to delete will be listed here -->
+            </ul>
+        </div>
+    </div>
     <script>
         function showTab(tabId) {
             const tabs = document.querySelectorAll('.tab-content');
@@ -498,6 +627,202 @@ function updateStatus(index, newStatus) {
 function editBorrowing(index) {
     alert(`Editing borrowing with ID: ${borrowings[index].borrowingID}. Implement edit logic here.`);
 }
+// Updated displayMembers function to include edit buttons
+function displayMembers(filter = "", criteria = "name") {
+    const membersTableBody = document.getElementById("membersTableBody");
+    membersTableBody.innerHTML = ""; // Clear existing rows
+
+    members
+        .filter(member => member[criteria].toLowerCase().includes(filter.toLowerCase()))
+        .forEach((member, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${member.name}</td>
+                <td>${member.lastName}</td>
+                <td>${member.id}</td>
+                <td>${member.department}</td>
+                <td>
+                    <button onclick="editMember(${index})">Edit</button>
+                    <button onclick="deleteMember(${index})">Delete</button>
+                </td>
+            `;
+            membersTableBody.appendChild(row);
+        });
+}
+
+// Edit member
+function editMember(index) {
+    const member = members[index];
+
+    document.getElementById("MemberName").value = member.name;
+    document.getElementById("MemberLastName").value = member.lastName;
+    document.getElementById("MemberID").value = member.id;
+    document.getElementById("MemberDepartment").value = member.department;
+
+    // Change the form submit button to "Save Changes"
+    const submitButton = document.querySelector("form button[type='submit']");
+    submitButton.textContent = "Save Changes";
+    submitButton.setAttribute("onclick", `saveMember(${index})`);
+
+    // Show the cancel button
+    document.getElementById("cancelEdit").style.display = "inline";
+}
+
+// Save edited member
+function saveMember(index) {
+    const name = document.getElementById("MemberName").value;
+    const lastName = document.getElementById("MemberLastName").value;
+    const id = document.getElementById("MemberID").value;
+    const department = document.getElementById("MemberDepartment").value;
+
+    if (name && lastName && id && department) {
+        members[index] = { name, lastName, id, department };
+        displayMembers();
+        alert("Member updated successfully!");
+
+        // Reset form and change button back to Add Member
+        document.getElementById("membersForm").reset();
+        document.querySelector("form button[type='submit']").textContent = "Add Member";
+        document.querySelector("form button[type='submit']").setAttribute("onclick", "addMember()");
+        document.getElementById("cancelEdit").style.display = "none";
+    } else {
+        alert("Please fill in all fields.");
+    }
+}
+
+// Cancel edit
+document.getElementById("cancelEdit").addEventListener("click", function () {
+    document.getElementById("membersForm").reset();
+    document.querySelector("form button[type='submit']").textContent = "Add Member";
+    document.querySelector("form button[type='submit']").setAttribute("onclick", "addMember()");
+    document.getElementById("cancelEdit").style.display = "none";
+});
+
+// Add new member
+document.getElementById("membersForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("MemberName").value;
+    const lastName = document.getElementById("MemberLastName").value;
+    const id = document.getElementById("MemberID").value;
+    const department = document.getElementById("MemberDepartment").value;
+
+    if (name && lastName && id && department) {
+        members.push({ name, lastName, id, department });
+        displayMembers();
+        alert("Member added successfully!");
+        document.getElementById("membersForm").reset();
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+// Delete member
+function deleteMember(index) {
+    const confirmation = confirm("Are you sure you want to delete this member?");
+    if (confirmation) {
+        members.splice(index, 1); // Remove the member from the array
+        displayMembers(); // Refresh the table
+        alert("Member successfully deleted.");
+    }
+}
+const copies = [
+    { id: "C001", name: "Book One", author: "Author A", status: "Available" },
+    { id: "C002", name: "Book Two", author: "Author B", status: "Checked Out" },
+    { id: "C003", name: "Book Three", author: "Author C", status: "Available" },
+    { id: "C004", name: "Book Four", author: "Author D", status: "Available" },
+];
+
+// Populate copies list in the table
+function displayCopies(filter = "", criteria = "name") {
+    const copiesTableBody = document.getElementById("copiesTableBody");
+    const copiesToDelete = document.getElementById("copiesToDelete");
+    copiesTableBody.innerHTML = ""; // Clear existing rows
+    copiesToDelete.innerHTML = ""; // Clear delete list
+
+    copies
+        .filter(copy => copy[criteria].toLowerCase().includes(filter.toLowerCase()))
+        .forEach(copy => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${copy.id}</td>
+                <td>${copy.name}</td>
+                <td>${copy.author}</td>
+                <td>${copy.status}</td>
+                <td>
+                    <button onclick="editCopy('${copy.id}')">Edit</button>
+                    <button onclick="deleteCopy('${copy.id}')">Delete</button>
+                </td>
+            `;
+            copiesTableBody.appendChild(row);
+
+            // Add to delete list
+            const deleteItem = document.createElement("li");
+            deleteItem.innerHTML = `
+                ${copy.name} by ${copy.author} (ID: ${copy.id}) 
+                <button onclick="deleteCopy('${copy.id}')">Delete</button>
+            `;
+            copiesToDelete.appendChild(deleteItem);
+        });
+}
+
+// Search copies
+document.getElementById("searchCopyBox").addEventListener("input", function () {
+    const searchTerm = this.value;
+    const criteria = document.getElementById("searchCopyCriteria").value;
+    displayCopies(searchTerm, criteria);
+});
+
+// Add new copy
+document.getElementById("copiesForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const id = document.getElementById("CopyID").value;
+    const name = document.getElementById("CopyName").value;
+    const author = document.getElementById("CopyAuthor").value;
+    const status = document.getElementById("CopyStatus").value;
+
+    if (id && name && author && status) {
+        copies.push({ id, name, author, status });
+        displayCopies();
+        alert("Copy added successfully!");
+        document.getElementById("copiesForm").reset();
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+// Edit copy
+function editCopy(copyId) {
+    const copy = copies.find(copy => copy.id === copyId);
+    if (copy) {
+        document.getElementById("CopyID").value = copy.id;
+        document.getElementById("CopyName").value = copy.name;
+        document.getElementById("CopyAuthor").value = copy.author;
+        document.getElementById("CopyStatus").value = copy.status;
+        alert("Edit the copy details and submit to save changes.");
+    } else {
+        alert("Copy not found.");
+    }
+}
+
+// Delete copy
+function deleteCopy(copyId) {
+    const copyIndex = copies.findIndex(copy => copy.id === copyId);
+    if (copyIndex !== -1) {
+        copies.splice(copyIndex, 1);
+        displayCopies();
+        alert("Copy deleted successfully!");
+    } else {
+        alert("Copy not found.");
+    }
+}
+
+// Display all copies on page load
+window.onload = () => displayCopies();
+
+// Initialize display
+window.onload = () => displayMembers();
 
     </script>
 </body>
