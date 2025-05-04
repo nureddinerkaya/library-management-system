@@ -25,7 +25,6 @@ class CopiesServices:
             session.add(book)
             session.commit()
 
-
             return json({"message": "Copy added successfully."})
         except Exception as e:
             session.rollback()
